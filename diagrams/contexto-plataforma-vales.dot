@@ -1,0 +1,54 @@
+digraph ContextoPlataformaVales {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad="0.35",
+    nodesep="0.75",
+    ranksep="1.0",
+    fontname="Arial",
+    label="Contexto - Plataforma de Vales Profinsa",
+    labelloc="t",
+    fontsize="24"
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize="12",
+    margin="0.18,0.12",
+    color="#2d3748",
+    penwidth="1.4"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize="10",
+    color="#4a5568",
+    arrowsize="0.8"
+  ];
+
+  cliente [label="Cliente empresarial\nEmpresa que contrata el servicio y solicita dispersiones.", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  colaborador [label="Beneficiario\nColaborador que recibe y utiliza el saldo de vales.", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  operador [label="Operador Profinsa\nAdministra clientes, tarjetas, dispersiones e incidencias.", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  comercio [label="Comercio afiliado\nEstablecimiento donde se utiliza la tarjeta.", shape=folder, fillcolor="#08427b", fontcolor="white"];
+
+  sistemaVales [label="Plataforma de Vales Profinsa\nAdministra clientes, beneficiarios, tarjetas, saldos y dispersiones.", fillcolor="#1168bd", fontcolor="white", penwidth="2"];
+  procesador [label="Procesador de Pagos Externo\nAutoriza transacciones y conecta la tarjeta con la red de aceptación.", fillcolor="#1168bd", fontcolor="white"];
+  sap [label="SAP\nGestiona clientes, pedidos, facturación, cobranza y registros contables.", fillcolor="#1168bd", fontcolor="white"];
+  proveedorTarjetas [label="Proveedor de Tarjetas\nPersonaliza, fabrica y entrega tarjetas físicas.", fillcolor="#1168bd", fontcolor="white"];
+  sat [label="SAT\nAutoridad relacionada con la autorización y control del monedero electrónico.", fillcolor="#1168bd", fontcolor="white"];
+  pos [label="Red de Comercios / POS\nTerminales donde se presentan y procesan las transacciones.", fillcolor="#1168bd", fontcolor="white"];
+
+  cliente -> sistemaVales [label="Registra beneficiarios y solicita dispersiones\nHTTPS"];
+  colaborador -> sistemaVales [label="Consulta saldo y movimientos\nHTTPS"];
+  operador -> sistemaVales [label="Administra la operación\nHTTPS"];
+  comercio -> pos [label="Realiza el cobro"];
+
+  sistemaVales -> sap [label="Envía pedidos, facturación y conciliación\nAPI/OData/Archivos"];
+  sistemaVales -> procesador [label="Solicita altas, autorizaciones y movimientos\nAPI segura"];
+  sistemaVales -> proveedorTarjetas [label="Solicita personalización y producción"];
+  sistemaVales -> sat [label="Genera o entrega información regulatoria"];
+  pos -> procesador [label="Envía transacción de compra\nRed de pagos"];
+  procesador -> sistemaVales [label="Autoriza, aplica o notifica movimientos\nAPI segura"];
+}

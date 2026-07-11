@@ -1,0 +1,79 @@
+digraph ContenedoresPlataformaVales {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad="0.35",
+    nodesep="0.65",
+    ranksep="0.9",
+    compound=true,
+    fontname="Arial",
+    label="Contenedores - Plataforma de Vales Profinsa",
+    labelloc="t",
+    fontsize="24"
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize="12",
+    margin="0.18,0.12",
+    color="#2d3748",
+    penwidth="1.4"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize="10",
+    color="#4a5568",
+    arrowsize="0.8"
+  ];
+
+  cliente [label="Cliente empresarial", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  colaborador [label="Beneficiario", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  operador [label="Operador Profinsa", shape=folder, fillcolor="#08427b", fontcolor="white"];
+  comercio [label="Comercio afiliado", shape=folder, fillcolor="#08427b", fontcolor="white"];
+
+  procesador [label="Procesador de Pagos Externo", fillcolor="#1168bd", fontcolor="white"];
+  sap [label="SAP", fillcolor="#1168bd", fontcolor="white"];
+  proveedorTarjetas [label="Proveedor de Tarjetas", fillcolor="#1168bd", fontcolor="white"];
+  sat [label="SAT", fillcolor="#1168bd", fontcolor="white"];
+  pos [label="Red de Comercios / POS", fillcolor="#1168bd", fontcolor="white"];
+
+  subgraph cluster_sistemaVales {
+    label="Plataforma de Vales Profinsa";
+    color="#1168bd";
+    penwidth="2";
+    fontname="Arial";
+    fontsize="16";
+    style="rounded";
+    margin="20";
+
+    portalCliente [label="Portal de Clientes\nAplicación web", fillcolor="#438dd5", fontcolor="white"];
+    portalOperacion [label="Portal de Operación\nAplicación web", fillcolor="#438dd5", fontcolor="white"];
+    api [label="API / Core de Vales\nAPI REST", fillcolor="#438dd5", fontcolor="white"];
+    motorSaldos [label="Motor de Saldos\nServicio transaccional", fillcolor="#438dd5", fontcolor="white"];
+    integracion [label="Capa de Integración\nServicios/API", fillcolor="#438dd5", fontcolor="white"];
+    baseDatos [label="Base de Datos Operativa\nBase de datos relacional", shape=cylinder, fillcolor="#438dd5", fontcolor="white"];
+    auditoria [label="Auditoría y Monitoreo\nLogs y monitoreo", fillcolor="#438dd5", fontcolor="white"];
+  }
+
+  cliente -> portalCliente [label="Registra beneficiarios y solicita dispersiones\nHTTPS"];
+  colaborador -> api [label="Consulta saldo y movimientos\nHTTPS"];
+  operador -> portalOperacion [label="Administra la operación\nHTTPS"];
+  comercio -> pos [label="Realiza el cobro"];
+
+  portalCliente -> api [label="Consume servicios\nJSON/HTTPS"];
+  portalOperacion -> api [label="Consume servicios\nJSON/HTTPS"];
+  api -> motorSaldos [label="Ejecuta operaciones de saldo"];
+  api -> baseDatos [label="Consulta y actualiza información"];
+  api -> integracion [label="Solicita integraciones"];
+  api -> auditoria [label="Registra eventos y trazabilidad"];
+  motorSaldos -> baseDatos [label="Registra movimientos y saldos"];
+  integracion -> sap [label="Envía pedidos, facturación y conciliación\nAPI/OData/Archivos"];
+  integracion -> procesador [label="Solicita altas, autorizaciones y movimientos\nAPI segura"];
+  integracion -> proveedorTarjetas [label="Solicita personalización y producción"];
+  integracion -> sat [label="Genera o entrega información regulatoria"];
+  pos -> procesador [label="Envía transacción de compra\nRed de pagos"];
+  procesador -> motorSaldos [label="Autoriza, aplica o notifica movimientos\nAPI segura"];
+}

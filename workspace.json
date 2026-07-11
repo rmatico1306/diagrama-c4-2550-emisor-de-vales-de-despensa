@@ -1,0 +1,1433 @@
+{
+  "configuration" : {
+    "scope" : "SoftwareSystem"
+  },
+  "description" : "Arquitectura conceptual preliminar para la emisión y operación de monederos electrónicos de vales de despensa.",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-07-10T18:45:28Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Empresa que contrata el servicio, registra colaboradores, solicita tarjetas y genera pedidos de dispersión.",
+      "id" : "1",
+      "name" : "Empresa cliente",
+      "properties" : {
+        "structurizr.dsl.identifier" : "empresaCliente"
+      },
+      "relationships" : [ {
+        "description" : "Registra colaboradores, solicita tarjetas, genera dispersiones y consulta reportes",
+        "destinationId" : "6",
+        "id" : "38",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Usa",
+        "destinationId" : "7",
+        "id" : "56",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person,Cliente"
+    }, {
+      "description" : "Colaborador que recibe, activa y utiliza el monedero electrónico de vales de despensa.",
+      "id" : "2",
+      "name" : "Beneficiario",
+      "properties" : {
+        "structurizr.dsl.identifier" : "beneficiario"
+      },
+      "relationships" : [ {
+        "description" : "Activa y administra su monedero, consulta saldo y movimientos",
+        "destinationId" : "6",
+        "id" : "39",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "App móvil / HTTPS"
+      }, {
+        "description" : "Usa",
+        "destinationId" : "8",
+        "id" : "57",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person,Beneficiario"
+    }, {
+      "description" : "Personal encargado de administrar clientes, beneficiarios, tarjetas, pedidos, dispersiones y aclaraciones.",
+      "id" : "3",
+      "name" : "Operador PROFINSA",
+      "properties" : {
+        "structurizr.dsl.identifier" : "operadorProfinsa"
+      },
+      "relationships" : [ {
+        "description" : "Administra la operación del monedero",
+        "destinationId" : "6",
+        "id" : "40",
+        "sourceId" : "3",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      }, {
+        "description" : "Usa",
+        "destinationId" : "9",
+        "id" : "58",
+        "sourceId" : "3",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      } ],
+      "tags" : "Element,Person,Profinsa"
+    }, {
+      "description" : "Personal que valida pagos, supervisa dispersiones, realiza conciliaciones y registra operaciones contables.",
+      "id" : "4",
+      "name" : "Tesorería y Contabilidad",
+      "properties" : {
+        "structurizr.dsl.identifier" : "tesoreriaContabilidad"
+      },
+      "relationships" : [ {
+        "description" : "Valida pagos, autoriza dispersiones y realiza conciliaciones",
+        "destinationId" : "6",
+        "id" : "41",
+        "sourceId" : "4",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      }, {
+        "description" : "Usa",
+        "destinationId" : "9",
+        "id" : "59",
+        "sourceId" : "4",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      } ],
+      "tags" : "Element,Person,Profinsa"
+    }, {
+      "description" : "Personal que atiende bloqueos, reposiciones, aclaraciones e incidentes de clientes y beneficiarios.",
+      "id" : "5",
+      "name" : "Soporte PROFINSA",
+      "properties" : {
+        "structurizr.dsl.identifier" : "soporteProfinsa"
+      },
+      "relationships" : [ {
+        "description" : "Atiende bloqueos, reposiciones, aclaraciones e incidentes",
+        "destinationId" : "6",
+        "id" : "42",
+        "sourceId" : "5",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      }, {
+        "description" : "Usa",
+        "destinationId" : "10",
+        "id" : "60",
+        "sourceId" : "5",
+        "tags" : "Relationship",
+        "technology" : "HTTPS / MFA"
+      } ],
+      "tags" : "Element,Person,Profinsa"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Permite a las empresas clientes administrar usuarios, colaboradores, tarjetas, pedidos de dispersión y reportes.",
+        "documentation" : { },
+        "id" : "7",
+        "name" : "Portal empresarial",
+        "properties" : {
+          "structurizr.dsl.identifier" : "portalEmpresarial"
+        },
+        "relationships" : [ {
+          "description" : "Consume APIs",
+          "destinationId" : "11",
+          "id" : "61",
+          "sourceId" : "7",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / JSON"
+        }, {
+          "description" : "Autentica usuarios",
+          "destinationId" : "12",
+          "id" : "65",
+          "sourceId" : "7",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Web",
+        "technology" : "Aplicación web"
+      }, {
+        "description" : "Permite activar la tarjeta, consultar saldo y movimientos, bloquear el monedero y recibir notificaciones.",
+        "documentation" : { },
+        "id" : "8",
+        "name" : "Aplicación del beneficiario",
+        "properties" : {
+          "structurizr.dsl.identifier" : "appBeneficiario"
+        },
+        "relationships" : [ {
+          "description" : "Consume APIs",
+          "destinationId" : "11",
+          "id" : "62",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / JSON"
+        }, {
+          "description" : "Autentica beneficiarios",
+          "destinationId" : "12",
+          "id" : "66",
+          "sourceId" : "8",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Mobile",
+        "technology" : "Aplicación móvil"
+      }, {
+        "description" : "Permite administrar clientes, contratos, pedidos, tarjetas, dispersiones, excepciones y conciliaciones.",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "Portal operativo PROFINSA",
+        "properties" : {
+          "structurizr.dsl.identifier" : "portalOperacion"
+        },
+        "relationships" : [ {
+          "description" : "Consume APIs",
+          "destinationId" : "11",
+          "id" : "63",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / JSON"
+        }, {
+          "description" : "Autentica operadores con MFA",
+          "destinationId" : "12",
+          "id" : "67",
+          "sourceId" : "9",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra acciones administrativas",
+          "destinationId" : "28",
+          "id" : "119",
+          "sourceId" : "9",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Web",
+        "technology" : "Aplicación web"
+      }, {
+        "description" : "Permite atender aclaraciones, bloqueos, desbloqueos, reposiciones y seguimiento de incidentes.",
+        "documentation" : { },
+        "id" : "10",
+        "name" : "Portal de soporte",
+        "properties" : {
+          "structurizr.dsl.identifier" : "portalSoporte"
+        },
+        "relationships" : [ {
+          "description" : "Consume APIs",
+          "destinationId" : "11",
+          "id" : "64",
+          "sourceId" : "10",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / JSON"
+        }, {
+          "description" : "Autentica personal de soporte con MFA",
+          "destinationId" : "12",
+          "id" : "68",
+          "sourceId" : "10",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Web",
+        "technology" : "Aplicación web"
+      }, {
+        "description" : "Punto de entrada para las aplicaciones; autentica, autoriza, limita y registra las solicitudes.",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "API Gateway",
+        "properties" : {
+          "structurizr.dsl.identifier" : "apiGateway"
+        },
+        "relationships" : [ {
+          "description" : "Valida identidades, sesiones y permisos",
+          "destinationId" : "12",
+          "id" : "69",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Invoca servicios de negocio",
+          "destinationId" : "13",
+          "id" : "70",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Invoca operaciones de tarjetas",
+          "destinationId" : "15",
+          "id" : "71",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Invoca operaciones de dispersión",
+          "destinationId" : "14",
+          "id" : "72",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Invoca operaciones de soporte y aclaraciones",
+          "destinationId" : "17",
+          "id" : "73",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita reportes",
+          "destinationId" : "18",
+          "id" : "74",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra accesos y solicitudes",
+          "destinationId" : "28",
+          "id" : "117",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,API",
+        "technology" : "API Management / HTTPS"
+      }, {
+        "description" : "Administra usuarios, roles, autenticación multifactor, sesiones y políticas de acceso.",
+        "documentation" : { },
+        "id" : "12",
+        "name" : "Gestión de identidad y acceso",
+        "properties" : {
+          "structurizr.dsl.identifier" : "identidadAccesos"
+        },
+        "relationships" : [ {
+          "description" : "Registra autenticaciones y cambios de permisos",
+          "destinationId" : "28",
+          "id" : "118",
+          "sourceId" : "12",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Security",
+        "technology" : "IAM / OAuth 2.0 / OpenID Connect"
+      }, {
+        "description" : "Gestiona clientes, beneficiarios, contratos, pedidos, autorizaciones internas, tarjetas y reglas comerciales.",
+        "documentation" : { },
+        "id" : "13",
+        "name" : "Core de negocio PROFINSA",
+        "properties" : {
+          "structurizr.dsl.identifier" : "coreNegocio"
+        },
+        "relationships" : [ {
+          "description" : "Lee y escribe",
+          "destinationId" : "25",
+          "id" : "75",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Almacena y consulta documentos",
+          "destinationId" : "27",
+          "id" : "76",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica eventos de negocio",
+          "destinationId" : "24",
+          "id" : "77",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita procesos empresariales",
+          "destinationId" : "21",
+          "id" : "78",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita operaciones del procesador",
+          "destinationId" : "20",
+          "id" : "79",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra actividades",
+          "destinationId" : "28",
+          "id" : "80",
+          "sourceId" : "13",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Core",
+        "technology" : "Servicios backend"
+      }, {
+        "description" : "Valida, autoriza y ejecuta las instrucciones de dispersión hacia el procesador externo.",
+        "documentation" : { },
+        "id" : "14",
+        "name" : "Servicio de dispersiones",
+        "properties" : {
+          "structurizr.dsl.identifier" : "servicioDispersiones"
+        },
+        "relationships" : [ {
+          "description" : "Consulta pedidos autorizados",
+          "destinationId" : "25",
+          "id" : "81",
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra instrucciones y movimientos de control",
+          "destinationId" : "26",
+          "id" : "82",
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Envía instrucciones de dispersión",
+          "destinationId" : "20",
+          "id" : "83",
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica resultados de dispersión",
+          "destinationId" : "24",
+          "id" : "84",
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra actividades críticas",
+          "destinationId" : "28",
+          "id" : "85",
+          "sourceId" : "14",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Core",
+        "technology" : "Servicio backend"
+      }, {
+        "description" : "Gestiona solicitudes, asociaciones, activaciones, bloqueos, reposiciones, cancelaciones y estados de tarjetas.",
+        "documentation" : { },
+        "id" : "15",
+        "name" : "Gestión de tarjetas",
+        "properties" : {
+          "structurizr.dsl.identifier" : "gestionTarjetas"
+        },
+        "relationships" : [ {
+          "description" : "Consulta y actualiza estados",
+          "destinationId" : "25",
+          "id" : "86",
+          "sourceId" : "15",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita emisión, activación, bloqueo y reposición",
+          "destinationId" : "20",
+          "id" : "87",
+          "sourceId" : "15",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita fabricación y personalización",
+          "destinationId" : "23",
+          "id" : "88",
+          "sourceId" : "15",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica cambios de estado",
+          "destinationId" : "24",
+          "id" : "89",
+          "sourceId" : "15",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra operaciones de tarjeta",
+          "destinationId" : "28",
+          "id" : "90",
+          "sourceId" : "15",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Core",
+        "technology" : "Servicio backend"
+      }, {
+        "description" : "Compara pedidos, dispersiones, transacciones, saldos, liquidaciones bancarias y registros contables.",
+        "documentation" : { },
+        "id" : "16",
+        "name" : "Motor de conciliación",
+        "properties" : {
+          "structurizr.dsl.identifier" : "conciliacion"
+        },
+        "relationships" : [ {
+          "description" : "Consulta movimientos internos",
+          "destinationId" : "26",
+          "id" : "96",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Consulta pedidos y dispersiones",
+          "destinationId" : "25",
+          "id" : "97",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Obtiene transacciones y saldos del procesador",
+          "destinationId" : "20",
+          "id" : "98",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Obtiene depósitos y liquidaciones",
+          "destinationId" : "22",
+          "id" : "99",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Obtiene registros contables",
+          "destinationId" : "21",
+          "id" : "100",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra resultados y diferencias",
+          "destinationId" : "28",
+          "id" : "101",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica diferencias de conciliación",
+          "destinationId" : "24",
+          "id" : "102",
+          "sourceId" : "16",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Core",
+        "technology" : "Servicio backend / Procesamiento por lotes"
+      }, {
+        "description" : "Gestiona compras no reconocidas, cargos duplicados, devoluciones, ajustes y seguimiento de casos.",
+        "documentation" : { },
+        "id" : "17",
+        "name" : "Servicio de aclaraciones",
+        "properties" : {
+          "structurizr.dsl.identifier" : "aclaraciones"
+        },
+        "relationships" : [ {
+          "description" : "Registra y consulta casos",
+          "destinationId" : "25",
+          "id" : "103",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Consulta transacciones relacionadas",
+          "destinationId" : "26",
+          "id" : "104",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Solicita reversos, devoluciones o investigaciones",
+          "destinationId" : "20",
+          "id" : "105",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Almacena evidencias",
+          "destinationId" : "27",
+          "id" : "106",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica cambios del caso",
+          "destinationId" : "24",
+          "id" : "107",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra acciones",
+          "destinationId" : "28",
+          "id" : "108",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Core",
+        "technology" : "Servicio backend"
+      }, {
+        "description" : "Genera reportes operativos, financieros, transaccionales, comerciales y evidencias para auditoría.",
+        "documentation" : { },
+        "id" : "18",
+        "name" : "Servicio de reportes",
+        "properties" : {
+          "structurizr.dsl.identifier" : "reportes"
+        },
+        "relationships" : [ {
+          "description" : "Consulta información operativa",
+          "destinationId" : "25",
+          "id" : "109",
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Consulta movimientos y saldos de control",
+          "destinationId" : "26",
+          "id" : "110",
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Consulta evidencia auditable",
+          "destinationId" : "28",
+          "id" : "111",
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Reporting",
+        "technology" : "Servicio de reportes"
+      }, {
+        "description" : "Envía correos, mensajes SMS, notificaciones push y avisos operativos.",
+        "documentation" : { },
+        "id" : "19",
+        "name" : "Servicio de notificaciones",
+        "properties" : {
+          "structurizr.dsl.identifier" : "notificaciones"
+        },
+        "relationships" : [ {
+          "description" : "Envía correos, SMS y notificaciones push",
+          "destinationId" : "36",
+          "id" : "113",
+          "sourceId" : "19",
+          "tags" : "Relationship",
+          "technology" : "API"
+        } ],
+        "tags" : "Element,Container,Integration",
+        "technology" : "Correo / SMS / Push"
+      }, {
+        "description" : "Aísla al core de las APIs específicas del procesador y gestiona webhooks, reintentos, idempotencia y traducción de estados.",
+        "documentation" : { },
+        "id" : "20",
+        "name" : "Adaptador del procesador",
+        "properties" : {
+          "structurizr.dsl.identifier" : "adaptadorProcesador"
+        },
+        "relationships" : [ {
+          "description" : "Consume APIs de emisión y procesamiento",
+          "destinationId" : "29",
+          "id" : "91",
+          "sourceId" : "20",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / API REST"
+        }, {
+          "description" : "Registra compras, reversos y devoluciones",
+          "destinationId" : "26",
+          "id" : "93",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Publica eventos transaccionales",
+          "destinationId" : "24",
+          "id" : "94",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Registra solicitudes y respuestas",
+          "destinationId" : "28",
+          "id" : "95",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Integration",
+        "technology" : "API REST / Webhooks / Archivos"
+      }, {
+        "description" : "Integra clientes, pedidos, pagos, facturación, comisiones y registros contables con SAP.",
+        "documentation" : { },
+        "id" : "21",
+        "name" : "Adaptador SAP",
+        "properties" : {
+          "structurizr.dsl.identifier" : "integracionSap"
+        },
+        "relationships" : [ {
+          "description" : "Intercambia clientes, pagos, facturas y contabilidad",
+          "destinationId" : "33",
+          "id" : "114",
+          "sourceId" : "21",
+          "tags" : "Relationship",
+          "technology" : "OData / API"
+        } ],
+        "tags" : "Element,Container,Integration",
+        "technology" : "OData / API REST / Servicios SAP"
+      }, {
+        "description" : "Obtiene depósitos, movimientos y estados de cuenta para validar fondos y realizar conciliación.",
+        "documentation" : { },
+        "id" : "22",
+        "name" : "Adaptador bancario",
+        "properties" : {
+          "structurizr.dsl.identifier" : "integracionBancaria"
+        },
+        "relationships" : [ {
+          "description" : "Consulta depósitos, estados de cuenta y liquidaciones",
+          "destinationId" : "34",
+          "id" : "115",
+          "sourceId" : "22",
+          "tags" : "Relationship",
+          "technology" : "API / SFTP"
+        } ],
+        "tags" : "Element,Container,Integration",
+        "technology" : "API bancaria / SFTP / Archivos"
+      }, {
+        "description" : "Envía órdenes de fabricación, personalización, envío y recepción de tarjetas.",
+        "documentation" : { },
+        "id" : "23",
+        "name" : "Adaptador del fabricante de tarjetas",
+        "properties" : {
+          "structurizr.dsl.identifier" : "integracionTarjetas"
+        },
+        "relationships" : [ {
+          "description" : "Envía órdenes de fabricación y recibe estados",
+          "destinationId" : "35",
+          "id" : "116",
+          "sourceId" : "23",
+          "tags" : "Relationship",
+          "technology" : "API / SFTP"
+        } ],
+        "tags" : "Element,Container,Integration",
+        "technology" : "API REST / SFTP / Archivos"
+      }, {
+        "description" : "Distribuye eventos de pedidos, dispersiones, tarjetas, transacciones, conciliaciones y notificaciones.",
+        "documentation" : { },
+        "id" : "24",
+        "name" : "Bus de eventos",
+        "properties" : {
+          "structurizr.dsl.identifier" : "busEventos"
+        },
+        "relationships" : [ {
+          "description" : "Entrega eventos notificables",
+          "destinationId" : "19",
+          "id" : "112",
+          "sourceId" : "24",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Messaging",
+        "technology" : "Mensajería asíncrona"
+      }, {
+        "description" : "Almacena clientes, contratos, usuarios, beneficiarios, pedidos, tarjetas, configuraciones y aclaraciones.",
+        "documentation" : { },
+        "id" : "25",
+        "name" : "Base de datos operativa",
+        "properties" : {
+          "structurizr.dsl.identifier" : "baseOperativa"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "Base de datos relacional"
+      }, {
+        "description" : "Mantiene una réplica auditable de dispersiones, compras, reversos, devoluciones y ajustes para control y conciliación.",
+        "documentation" : { },
+        "id" : "26",
+        "name" : "Ledger de control PROFINSA",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ledgerControl"
+        },
+        "tags" : "Element,Container,Database,Ledger",
+        "technology" : "Base de datos transaccional"
+      }, {
+        "description" : "Almacena contratos, identificaciones, layouts, comprobantes, facturas y evidencias.",
+        "documentation" : { },
+        "id" : "27",
+        "name" : "Repositorio documental",
+        "properties" : {
+          "structurizr.dsl.identifier" : "repositorioDocumental"
+        },
+        "tags" : "Element,Container,Storage",
+        "technology" : "Almacenamiento de objetos"
+      }, {
+        "description" : "Conserva registros protegidos de actividad, accesos, integraciones y operaciones críticas.",
+        "documentation" : { },
+        "id" : "28",
+        "name" : "Auditoría y logs centralizados",
+        "properties" : {
+          "structurizr.dsl.identifier" : "auditoriaLogs"
+        },
+        "tags" : "Element,Container,Security,Database",
+        "technology" : "Logs inmutables / SIEM"
+      } ],
+      "description" : "Plataforma que administra clientes, beneficiarios, pedidos, tarjetas, dispersiones, saldos de control, movimientos, conciliación, soporte y evidencias de cumplimiento.",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "Plataforma de Monedero Electrónico PROFINSA",
+      "properties" : {
+        "structurizr.dsl.identifier" : "plataformaProfinsa"
+      },
+      "relationships" : [ {
+        "description" : "Solicita emisión técnica, dispersiones, bloqueos y consulta movimientos",
+        "destinationId" : "29",
+        "id" : "43",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "API REST / Archivos"
+      }, {
+        "description" : "Envía pedidos, comisiones, facturas y movimientos contables",
+        "destinationId" : "33",
+        "id" : "50",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "API / OData"
+      }, {
+        "description" : "Consulta depósitos y movimientos bancarios",
+        "destinationId" : "34",
+        "id" : "52",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "API / SFTP"
+      }, {
+        "description" : "Envía órdenes de fabricación y personalización",
+        "destinationId" : "35",
+        "id" : "53",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "API / SFTP"
+      }, {
+        "description" : "Solicita el envío de notificaciones",
+        "destinationId" : "36",
+        "id" : "54",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "API"
+      }, {
+        "description" : "Entrega documentación, evidencias y atiende verificaciones",
+        "destinationId" : "37",
+        "id" : "55",
+        "sourceId" : "6",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "description" : "Administra la emisión técnica, saldo operativo, autorizaciones, NIP, EMV, reversos, devoluciones y compensación.",
+      "documentation" : { },
+      "id" : "29",
+      "name" : "Procesador externo de tarjetas",
+      "properties" : {
+        "structurizr.dsl.identifier" : "procesadorExterno"
+      },
+      "relationships" : [ {
+        "description" : "Notifica compras, rechazos, reversos, devoluciones y cambios de estado",
+        "destinationId" : "6",
+        "id" : "44",
+        "sourceId" : "29",
+        "tags" : "Relationship",
+        "technology" : "Webhooks / Archivos"
+      }, {
+        "description" : "Opera el programa de tarjetas y realiza procesos de compensación",
+        "destinationId" : "30",
+        "id" : "45",
+        "sourceId" : "29",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Responde aprobaciones o rechazos",
+        "destinationId" : "31",
+        "id" : "49",
+        "sourceId" : "29",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Envía eventos transaccionales",
+        "destinationId" : "20",
+        "id" : "92",
+        "sourceId" : "29",
+        "tags" : "Relationship",
+        "technology" : "Webhooks / Archivos"
+      } ],
+      "tags" : "Element,Software System,External,Processor"
+    }, {
+      "description" : "Proporciona el BIN, mantiene la relación con la red de pagos y participa en la liquidación del programa.",
+      "documentation" : { },
+      "id" : "30",
+      "name" : "Banco / BIN Sponsor",
+      "properties" : {
+        "structurizr.dsl.identifier" : "bancoBinSponsor"
+      },
+      "relationships" : [ {
+        "description" : "Mantiene la relación con la red y habilita el programa de tarjetas",
+        "destinationId" : "31",
+        "id" : "46",
+        "sourceId" : "30",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External,Bank"
+    }, {
+      "description" : "Red utilizada para enrutar y procesar las transacciones, por ejemplo Visa, Mastercard, Carnet u otra.",
+      "documentation" : { },
+      "id" : "31",
+      "name" : "Red de pagos",
+      "properties" : {
+        "structurizr.dsl.identifier" : "redPagos"
+      },
+      "relationships" : [ {
+        "description" : "Enruta solicitudes de autorización y mensajes transaccionales",
+        "destinationId" : "29",
+        "id" : "48",
+        "sourceId" : "31",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External,Network"
+    }, {
+      "description" : "Establecimientos donde los beneficiarios realizan compras con el monedero.",
+      "documentation" : { },
+      "id" : "32",
+      "name" : "Comercios y terminales POS",
+      "properties" : {
+        "structurizr.dsl.identifier" : "comerciosPos"
+      },
+      "relationships" : [ {
+        "description" : "Envía transacciones de compra, cancelación y devolución",
+        "destinationId" : "31",
+        "id" : "47",
+        "sourceId" : "32",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External,Commerce"
+    }, {
+      "description" : "Sistema empresarial utilizado para clientes, facturación, contabilidad, cuentas por cobrar y conciliación.",
+      "documentation" : { },
+      "id" : "33",
+      "name" : "SAP",
+      "properties" : {
+        "structurizr.dsl.identifier" : "sap"
+      },
+      "relationships" : [ {
+        "description" : "Proporciona clientes, pagos, facturas y registros contables",
+        "destinationId" : "6",
+        "id" : "51",
+        "sourceId" : "33",
+        "tags" : "Relationship",
+        "technology" : "API / OData"
+      } ],
+      "tags" : "Element,Software System,External,SAP"
+    }, {
+      "description" : "Recibe los recursos de las empresas clientes antes de la dispersión.",
+      "documentation" : { },
+      "id" : "34",
+      "name" : "Banco recaudador PROFINSA",
+      "properties" : {
+        "structurizr.dsl.identifier" : "bancoRecaudador"
+      },
+      "tags" : "Element,Software System,External,Bank"
+    }, {
+      "description" : "Fabrica, personaliza, empaqueta y entrega las tarjetas físicas.",
+      "documentation" : { },
+      "id" : "35",
+      "name" : "Fabricante y personalizador de tarjetas",
+      "properties" : {
+        "structurizr.dsl.identifier" : "fabricanteTarjetas"
+      },
+      "tags" : "Element,Software System,External,Supplier"
+    }, {
+      "description" : "Entrega correos, mensajes SMS y notificaciones push.",
+      "documentation" : { },
+      "id" : "36",
+      "name" : "Proveedor de mensajería",
+      "properties" : {
+        "structurizr.dsl.identifier" : "servicioMensajeria"
+      },
+      "tags" : "Element,Software System,External,Supplier"
+    }, {
+      "description" : "Autoridad que autoriza y verifica el cumplimiento del emisor de monederos electrónicos.",
+      "documentation" : { },
+      "id" : "37",
+      "name" : "SAT",
+      "properties" : {
+        "structurizr.dsl.identifier" : "sat"
+      },
+      "tags" : "Element,Software System,External,Authority"
+    } ]
+  },
+  "name" : "Plataforma de Vales de Despensa PROFINSA",
+  "properties" : {
+    "structurizr.inspection.error" : "57",
+    "structurizr.dsl" : "d29ya3NwYWNlICJQbGF0YWZvcm1hIGRlIFZhbGVzIGRlIERlc3BlbnNhIFBST0ZJTlNBIiAiQXJxdWl0ZWN0dXJhIGNvbmNlcHR1YWwgcHJlbGltaW5hciBwYXJhIGxhIGVtaXNpw7NuIHkgb3BlcmFjacOzbiBkZSBtb25lZGVyb3MgZWxlY3Ryw7NuaWNvcyBkZSB2YWxlcyBkZSBkZXNwZW5zYS4iIHsKCiAgICBtb2RlbCB7CiAgICAgICAgZW1wcmVzYUNsaWVudGUgPSBwZXJzb24gIkVtcHJlc2EgY2xpZW50ZSIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiRW1wcmVzYSBxdWUgY29udHJhdGEgZWwgc2VydmljaW8sIHJlZ2lzdHJhIGNvbGFib3JhZG9yZXMsIHNvbGljaXRhIHRhcmpldGFzIHkgZ2VuZXJhIHBlZGlkb3MgZGUgZGlzcGVyc2nDs24uIgogICAgICAgICAgICB0YWdzICJDbGllbnRlIgogICAgICAgIH0KCiAgICAgICAgYmVuZWZpY2lhcmlvID0gcGVyc29uICJCZW5lZmljaWFyaW8iIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIkNvbGFib3JhZG9yIHF1ZSByZWNpYmUsIGFjdGl2YSB5IHV0aWxpemEgZWwgbW9uZWRlcm8gZWxlY3Ryw7NuaWNvIGRlIHZhbGVzIGRlIGRlc3BlbnNhLiIKICAgICAgICAgICAgdGFncyAiQmVuZWZpY2lhcmlvIgogICAgICAgIH0KCiAgICAgICAgb3BlcmFkb3JQcm9maW5zYSA9IHBlcnNvbiAiT3BlcmFkb3IgUFJPRklOU0EiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlBlcnNvbmFsIGVuY2FyZ2FkbyBkZSBhZG1pbmlzdHJhciBjbGllbnRlcywgYmVuZWZpY2lhcmlvcywgdGFyamV0YXMsIHBlZGlkb3MsIGRpc3BlcnNpb25lcyB5IGFjbGFyYWNpb25lcy4iCiAgICAgICAgICAgIHRhZ3MgIlByb2ZpbnNhIgogICAgICAgIH0KCiAgICAgICAgdGVzb3JlcmlhQ29udGFiaWxpZGFkID0gcGVyc29uICJUZXNvcmVyw61hIHkgQ29udGFiaWxpZGFkIiB7CiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJQZXJzb25hbCBxdWUgdmFsaWRhIHBhZ29zLCBzdXBlcnZpc2EgZGlzcGVyc2lvbmVzLCByZWFsaXphIGNvbmNpbGlhY2lvbmVzIHkgcmVnaXN0cmEgb3BlcmFjaW9uZXMgY29udGFibGVzLiIKICAgICAgICAgICAgdGFncyAiUHJvZmluc2EiCiAgICAgICAgfQoKICAgICAgICBzb3BvcnRlUHJvZmluc2EgPSBwZXJzb24gIlNvcG9ydGUgUFJPRklOU0EiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlBlcnNvbmFsIHF1ZSBhdGllbmRlIGJsb3F1ZW9zLCByZXBvc2ljaW9uZXMsIGFjbGFyYWNpb25lcyBlIGluY2lkZW50ZXMgZGUgY2xpZW50ZXMgeSBiZW5lZmljaWFyaW9zLiIKICAgICAgICAgICAgdGFncyAiUHJvZmluc2EiCiAgICAgICAgfQoKCiAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgogICAgICAgICAqIFNJU1RFTUEgUFJJTkNJUEFMCiAgICAgICAgICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKi8KCiAgICAgICAgcGxhdGFmb3JtYVByb2ZpbnNhID0gc29mdHdhcmVTeXN0ZW0gIlBsYXRhZm9ybWEgZGUgTW9uZWRlcm8gRWxlY3Ryw7NuaWNvIFBST0ZJTlNBIiB7CiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJQbGF0YWZvcm1hIHF1ZSBhZG1pbmlzdHJhIGNsaWVudGVzLCBiZW5lZmljaWFyaW9zLCBwZWRpZG9zLCB0YXJqZXRhcywgZGlzcGVyc2lvbmVzLCBzYWxkb3MgZGUgY29udHJvbCwgbW92aW1pZW50b3MsIGNvbmNpbGlhY2nDs24sIHNvcG9ydGUgeSBldmlkZW5jaWFzIGRlIGN1bXBsaW1pZW50by4iCgogICAgICAgICAgICAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioKICAgICAgICAgICAgICogQ0FOQUxFUwogICAgICAgICAgICAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgICAgICBwb3J0YWxFbXByZXNhcmlhbCA9IGNvbnRhaW5lciAiUG9ydGFsIGVtcHJlc2FyaWFsIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiUGVybWl0ZSBhIGxhcyBlbXByZXNhcyBjbGllbnRlcyBhZG1pbmlzdHJhciB1c3VhcmlvcywgY29sYWJvcmFkb3JlcywgdGFyamV0YXMsIHBlZGlkb3MgZGUgZGlzcGVyc2nDs24geSByZXBvcnRlcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJBcGxpY2FjacOzbiB3ZWIiCiAgICAgICAgICAgICAgICB0YWdzICJXZWIiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGFwcEJlbmVmaWNpYXJpbyA9IGNvbnRhaW5lciAiQXBsaWNhY2nDs24gZGVsIGJlbmVmaWNpYXJpbyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIlBlcm1pdGUgYWN0aXZhciBsYSB0YXJqZXRhLCBjb25zdWx0YXIgc2FsZG8geSBtb3ZpbWllbnRvcywgYmxvcXVlYXIgZWwgbW9uZWRlcm8geSByZWNpYmlyIG5vdGlmaWNhY2lvbmVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkFwbGljYWNpw7NuIG3Ds3ZpbCIKICAgICAgICAgICAgICAgIHRhZ3MgIk1vYmlsZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgcG9ydGFsT3BlcmFjaW9uID0gY29udGFpbmVyICJQb3J0YWwgb3BlcmF0aXZvIFBST0ZJTlNBIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiUGVybWl0ZSBhZG1pbmlzdHJhciBjbGllbnRlcywgY29udHJhdG9zLCBwZWRpZG9zLCB0YXJqZXRhcywgZGlzcGVyc2lvbmVzLCBleGNlcGNpb25lcyB5IGNvbmNpbGlhY2lvbmVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkFwbGljYWNpw7NuIHdlYiIKICAgICAgICAgICAgICAgIHRhZ3MgIldlYiIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgcG9ydGFsU29wb3J0ZSA9IGNvbnRhaW5lciAiUG9ydGFsIGRlIHNvcG9ydGUiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJQZXJtaXRlIGF0ZW5kZXIgYWNsYXJhY2lvbmVzLCBibG9xdWVvcywgZGVzYmxvcXVlb3MsIHJlcG9zaWNpb25lcyB5IHNlZ3VpbWllbnRvIGRlIGluY2lkZW50ZXMuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiQXBsaWNhY2nDs24gd2ViIgogICAgICAgICAgICAgICAgdGFncyAiV2ViIgogICAgICAgICAgICB9CgoKICAgICAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCiAgICAgICAgICAgICAqIEVOVFJBREEgWSBTRUdVUklEQUQKICAgICAgICAgICAgICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwoKICAgICAgICAgICAgYXBpR2F0ZXdheSA9IGNvbnRhaW5lciAiQVBJIEdhdGV3YXkiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJQdW50byBkZSBlbnRyYWRhIHBhcmEgbGFzIGFwbGljYWNpb25lczsgYXV0ZW50aWNhLCBhdXRvcml6YSwgbGltaXRhIHkgcmVnaXN0cmEgbGFzIHNvbGljaXR1ZGVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkFQSSBNYW5hZ2VtZW50IC8gSFRUUFMiCiAgICAgICAgICAgICAgICB0YWdzICJBUEkiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGlkZW50aWRhZEFjY2Vzb3MgPSBjb250YWluZXIgIkdlc3Rpw7NuIGRlIGlkZW50aWRhZCB5IGFjY2VzbyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkFkbWluaXN0cmEgdXN1YXJpb3MsIHJvbGVzLCBhdXRlbnRpY2FjacOzbiBtdWx0aWZhY3Rvciwgc2VzaW9uZXMgeSBwb2zDrXRpY2FzIGRlIGFjY2Vzby4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJJQU0gLyBPQXV0aCAyLjAgLyBPcGVuSUQgQ29ubmVjdCIKICAgICAgICAgICAgICAgIHRhZ3MgIlNlY3VyaXR5IgogICAgICAgICAgICB9CgoKICAgICAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCiAgICAgICAgICAgICAqIENPUkUgREUgTkVHT0NJTyBQUk9GSU5TQQogICAgICAgICAgICAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgICAgICBjb3JlTmVnb2NpbyA9IGNvbnRhaW5lciAiQ29yZSBkZSBuZWdvY2lvIFBST0ZJTlNBIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiR2VzdGlvbmEgY2xpZW50ZXMsIGJlbmVmaWNpYXJpb3MsIGNvbnRyYXRvcywgcGVkaWRvcywgYXV0b3JpemFjaW9uZXMgaW50ZXJuYXMsIHRhcmpldGFzIHkgcmVnbGFzIGNvbWVyY2lhbGVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIlNlcnZpY2lvcyBiYWNrZW5kIgogICAgICAgICAgICAgICAgdGFncyAiQ29yZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgc2VydmljaW9EaXNwZXJzaW9uZXMgPSBjb250YWluZXIgIlNlcnZpY2lvIGRlIGRpc3BlcnNpb25lcyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIlZhbGlkYSwgYXV0b3JpemEgeSBlamVjdXRhIGxhcyBpbnN0cnVjY2lvbmVzIGRlIGRpc3BlcnNpw7NuIGhhY2lhIGVsIHByb2Nlc2Fkb3IgZXh0ZXJuby4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJTZXJ2aWNpbyBiYWNrZW5kIgogICAgICAgICAgICAgICAgdGFncyAiQ29yZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZ2VzdGlvblRhcmpldGFzID0gY29udGFpbmVyICJHZXN0acOzbiBkZSB0YXJqZXRhcyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkdlc3Rpb25hIHNvbGljaXR1ZGVzLCBhc29jaWFjaW9uZXMsIGFjdGl2YWNpb25lcywgYmxvcXVlb3MsIHJlcG9zaWNpb25lcywgY2FuY2VsYWNpb25lcyB5IGVzdGFkb3MgZGUgdGFyamV0YXMuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiU2VydmljaW8gYmFja2VuZCIKICAgICAgICAgICAgICAgIHRhZ3MgIkNvcmUiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGNvbmNpbGlhY2lvbiA9IGNvbnRhaW5lciAiTW90b3IgZGUgY29uY2lsaWFjacOzbiIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkNvbXBhcmEgcGVkaWRvcywgZGlzcGVyc2lvbmVzLCB0cmFuc2FjY2lvbmVzLCBzYWxkb3MsIGxpcXVpZGFjaW9uZXMgYmFuY2FyaWFzIHkgcmVnaXN0cm9zIGNvbnRhYmxlcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJTZXJ2aWNpbyBiYWNrZW5kIC8gUHJvY2VzYW1pZW50byBwb3IgbG90ZXMiCiAgICAgICAgICAgICAgICB0YWdzICJDb3JlIgogICAgICAgICAgICB9CgogICAgICAgICAgICBhY2xhcmFjaW9uZXMgPSBjb250YWluZXIgIlNlcnZpY2lvIGRlIGFjbGFyYWNpb25lcyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkdlc3Rpb25hIGNvbXByYXMgbm8gcmVjb25vY2lkYXMsIGNhcmdvcyBkdXBsaWNhZG9zLCBkZXZvbHVjaW9uZXMsIGFqdXN0ZXMgeSBzZWd1aW1pZW50byBkZSBjYXNvcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJTZXJ2aWNpbyBiYWNrZW5kIgogICAgICAgICAgICAgICAgdGFncyAiQ29yZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgcmVwb3J0ZXMgPSBjb250YWluZXIgIlNlcnZpY2lvIGRlIHJlcG9ydGVzIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiR2VuZXJhIHJlcG9ydGVzIG9wZXJhdGl2b3MsIGZpbmFuY2llcm9zLCB0cmFuc2FjY2lvbmFsZXMsIGNvbWVyY2lhbGVzIHkgZXZpZGVuY2lhcyBwYXJhIGF1ZGl0b3LDrWEuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiU2VydmljaW8gZGUgcmVwb3J0ZXMiCiAgICAgICAgICAgICAgICB0YWdzICJSZXBvcnRpbmciCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIG5vdGlmaWNhY2lvbmVzID0gY29udGFpbmVyICJTZXJ2aWNpbyBkZSBub3RpZmljYWNpb25lcyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkVudsOtYSBjb3JyZW9zLCBtZW5zYWplcyBTTVMsIG5vdGlmaWNhY2lvbmVzIHB1c2ggeSBhdmlzb3Mgb3BlcmF0aXZvcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJDb3JyZW8gLyBTTVMgLyBQdXNoIgogICAgICAgICAgICAgICAgdGFncyAiSW50ZWdyYXRpb24iCiAgICAgICAgICAgIH0KCgogICAgICAgICAgICAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioKICAgICAgICAgICAgICogSU5URUdSQUNJT05FUwogICAgICAgICAgICAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgICAgICBhZGFwdGFkb3JQcm9jZXNhZG9yID0gY29udGFpbmVyICJBZGFwdGFkb3IgZGVsIHByb2Nlc2Fkb3IiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJBw61zbGEgYWwgY29yZSBkZSBsYXMgQVBJcyBlc3BlY8OtZmljYXMgZGVsIHByb2Nlc2Fkb3IgeSBnZXN0aW9uYSB3ZWJob29rcywgcmVpbnRlbnRvcywgaWRlbXBvdGVuY2lhIHkgdHJhZHVjY2nDs24gZGUgZXN0YWRvcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJBUEkgUkVTVCAvIFdlYmhvb2tzIC8gQXJjaGl2b3MiCiAgICAgICAgICAgICAgICB0YWdzICJJbnRlZ3JhdGlvbiIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgaW50ZWdyYWNpb25TYXAgPSBjb250YWluZXIgIkFkYXB0YWRvciBTQVAiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJJbnRlZ3JhIGNsaWVudGVzLCBwZWRpZG9zLCBwYWdvcywgZmFjdHVyYWNpw7NuLCBjb21pc2lvbmVzIHkgcmVnaXN0cm9zIGNvbnRhYmxlcyBjb24gU0FQLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIk9EYXRhIC8gQVBJIFJFU1QgLyBTZXJ2aWNpb3MgU0FQIgogICAgICAgICAgICAgICAgdGFncyAiSW50ZWdyYXRpb24iCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGludGVncmFjaW9uQmFuY2FyaWEgPSBjb250YWluZXIgIkFkYXB0YWRvciBiYW5jYXJpbyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIk9idGllbmUgZGVww7NzaXRvcywgbW92aW1pZW50b3MgeSBlc3RhZG9zIGRlIGN1ZW50YSBwYXJhIHZhbGlkYXIgZm9uZG9zIHkgcmVhbGl6YXIgY29uY2lsaWFjacOzbi4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJBUEkgYmFuY2FyaWEgLyBTRlRQIC8gQXJjaGl2b3MiCiAgICAgICAgICAgICAgICB0YWdzICJJbnRlZ3JhdGlvbiIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgaW50ZWdyYWNpb25UYXJqZXRhcyA9IGNvbnRhaW5lciAiQWRhcHRhZG9yIGRlbCBmYWJyaWNhbnRlIGRlIHRhcmpldGFzIiB7CiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiAiRW52w61hIMOzcmRlbmVzIGRlIGZhYnJpY2FjacOzbiwgcGVyc29uYWxpemFjacOzbiwgZW52w61vIHkgcmVjZXBjacOzbiBkZSB0YXJqZXRhcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJBUEkgUkVTVCAvIFNGVFAgLyBBcmNoaXZvcyIKICAgICAgICAgICAgICAgIHRhZ3MgIkludGVncmF0aW9uIgogICAgICAgICAgICB9CgogICAgICAgICAgICBidXNFdmVudG9zID0gY29udGFpbmVyICJCdXMgZGUgZXZlbnRvcyIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkRpc3RyaWJ1eWUgZXZlbnRvcyBkZSBwZWRpZG9zLCBkaXNwZXJzaW9uZXMsIHRhcmpldGFzLCB0cmFuc2FjY2lvbmVzLCBjb25jaWxpYWNpb25lcyB5IG5vdGlmaWNhY2lvbmVzLiIKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIk1lbnNhamVyw61hIGFzw61uY3JvbmEiCiAgICAgICAgICAgICAgICB0YWdzICJNZXNzYWdpbmciCiAgICAgICAgICAgIH0KCgogICAgICAgICAgICAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioKICAgICAgICAgICAgICogREFUT1MKICAgICAgICAgICAgICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwoKICAgICAgICAgICAgYmFzZU9wZXJhdGl2YSA9IGNvbnRhaW5lciAiQmFzZSBkZSBkYXRvcyBvcGVyYXRpdmEiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJBbG1hY2VuYSBjbGllbnRlcywgY29udHJhdG9zLCB1c3VhcmlvcywgYmVuZWZpY2lhcmlvcywgcGVkaWRvcywgdGFyamV0YXMsIGNvbmZpZ3VyYWNpb25lcyB5IGFjbGFyYWNpb25lcy4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJCYXNlIGRlIGRhdG9zIHJlbGFjaW9uYWwiCiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgbGVkZ2VyQ29udHJvbCA9IGNvbnRhaW5lciAiTGVkZ2VyIGRlIGNvbnRyb2wgUFJPRklOU0EiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJNYW50aWVuZSB1bmEgcsOpcGxpY2EgYXVkaXRhYmxlIGRlIGRpc3BlcnNpb25lcywgY29tcHJhcywgcmV2ZXJzb3MsIGRldm9sdWNpb25lcyB5IGFqdXN0ZXMgcGFyYSBjb250cm9sIHkgY29uY2lsaWFjacOzbi4iCiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJCYXNlIGRlIGRhdG9zIHRyYW5zYWNjaW9uYWwiCiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSxMZWRnZXIiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHJlcG9zaXRvcmlvRG9jdW1lbnRhbCA9IGNvbnRhaW5lciAiUmVwb3NpdG9yaW8gZG9jdW1lbnRhbCIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkFsbWFjZW5hIGNvbnRyYXRvcywgaWRlbnRpZmljYWNpb25lcywgbGF5b3V0cywgY29tcHJvYmFudGVzLCBmYWN0dXJhcyB5IGV2aWRlbmNpYXMuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiQWxtYWNlbmFtaWVudG8gZGUgb2JqZXRvcyIKICAgICAgICAgICAgICAgIHRhZ3MgIlN0b3JhZ2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGF1ZGl0b3JpYUxvZ3MgPSBjb250YWluZXIgIkF1ZGl0b3LDrWEgeSBsb2dzIGNlbnRyYWxpemFkb3MiIHsKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uICJDb25zZXJ2YSByZWdpc3Ryb3MgcHJvdGVnaWRvcyBkZSBhY3RpdmlkYWQsIGFjY2Vzb3MsIGludGVncmFjaW9uZXMgeSBvcGVyYWNpb25lcyBjcsOtdGljYXMuIgogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiTG9ncyBpbm11dGFibGVzIC8gU0lFTSIKICAgICAgICAgICAgICAgIHRhZ3MgIlNlY3VyaXR5LERhdGFiYXNlIgogICAgICAgICAgICB9CiAgICAgICAgfQoKCiAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgogICAgICAgICAqIFNJU1RFTUFTIEVYVEVSTk9TCiAgICAgICAgICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKi8KCiAgICAgICAgcHJvY2VzYWRvckV4dGVybm8gPSBzb2Z0d2FyZVN5c3RlbSAiUHJvY2VzYWRvciBleHRlcm5vIGRlIHRhcmpldGFzIiB7CiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJBZG1pbmlzdHJhIGxhIGVtaXNpw7NuIHTDqWNuaWNhLCBzYWxkbyBvcGVyYXRpdm8sIGF1dG9yaXphY2lvbmVzLCBOSVAsIEVNViwgcmV2ZXJzb3MsIGRldm9sdWNpb25lcyB5IGNvbXBlbnNhY2nDs24uIgogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCxQcm9jZXNzb3IiCiAgICAgICAgfQoKICAgICAgICBiYW5jb0JpblNwb25zb3IgPSBzb2Z0d2FyZVN5c3RlbSAiQmFuY28gLyBCSU4gU3BvbnNvciIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiUHJvcG9yY2lvbmEgZWwgQklOLCBtYW50aWVuZSBsYSByZWxhY2nDs24gY29uIGxhIHJlZCBkZSBwYWdvcyB5IHBhcnRpY2lwYSBlbiBsYSBsaXF1aWRhY2nDs24gZGVsIHByb2dyYW1hLiIKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwsQmFuayIKICAgICAgICB9CgogICAgICAgIHJlZFBhZ29zID0gc29mdHdhcmVTeXN0ZW0gIlJlZCBkZSBwYWdvcyIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiUmVkIHV0aWxpemFkYSBwYXJhIGVucnV0YXIgeSBwcm9jZXNhciBsYXMgdHJhbnNhY2Npb25lcywgcG9yIGVqZW1wbG8gVmlzYSwgTWFzdGVyY2FyZCwgQ2FybmV0IHUgb3RyYS4iCiAgICAgICAgICAgIHRhZ3MgIkV4dGVybmFsLE5ldHdvcmsiCiAgICAgICAgfQoKICAgICAgICBjb21lcmNpb3NQb3MgPSBzb2Z0d2FyZVN5c3RlbSAiQ29tZXJjaW9zIHkgdGVybWluYWxlcyBQT1MiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIkVzdGFibGVjaW1pZW50b3MgZG9uZGUgbG9zIGJlbmVmaWNpYXJpb3MgcmVhbGl6YW4gY29tcHJhcyBjb24gZWwgbW9uZWRlcm8uIgogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCxDb21tZXJjZSIKICAgICAgICB9CgogICAgICAgIHNhcCA9IHNvZnR3YXJlU3lzdGVtICJTQVAiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlNpc3RlbWEgZW1wcmVzYXJpYWwgdXRpbGl6YWRvIHBhcmEgY2xpZW50ZXMsIGZhY3R1cmFjacOzbiwgY29udGFiaWxpZGFkLCBjdWVudGFzIHBvciBjb2JyYXIgeSBjb25jaWxpYWNpw7NuLiIKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwsU0FQIgogICAgICAgIH0KCiAgICAgICAgYmFuY29SZWNhdWRhZG9yID0gc29mdHdhcmVTeXN0ZW0gIkJhbmNvIHJlY2F1ZGFkb3IgUFJPRklOU0EiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIlJlY2liZSBsb3MgcmVjdXJzb3MgZGUgbGFzIGVtcHJlc2FzIGNsaWVudGVzIGFudGVzIGRlIGxhIGRpc3BlcnNpw7NuLiIKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwsQmFuayIKICAgICAgICB9CgogICAgICAgIGZhYnJpY2FudGVUYXJqZXRhcyA9IHNvZnR3YXJlU3lzdGVtICJGYWJyaWNhbnRlIHkgcGVyc29uYWxpemFkb3IgZGUgdGFyamV0YXMiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gIkZhYnJpY2EsIHBlcnNvbmFsaXphLCBlbXBhcXVldGEgeSBlbnRyZWdhIGxhcyB0YXJqZXRhcyBmw61zaWNhcy4iCiAgICAgICAgICAgIHRhZ3MgIkV4dGVybmFsLFN1cHBsaWVyIgogICAgICAgIH0KCiAgICAgICAgc2VydmljaW9NZW5zYWplcmlhID0gc29mdHdhcmVTeXN0ZW0gIlByb3ZlZWRvciBkZSBtZW5zYWplcsOtYSIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiRW50cmVnYSBjb3JyZW9zLCBtZW5zYWplcyBTTVMgeSBub3RpZmljYWNpb25lcyBwdXNoLiIKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwsU3VwcGxpZXIiCiAgICAgICAgfQoKICAgICAgICBzYXQgPSBzb2Z0d2FyZVN5c3RlbSAiU0FUIiB7CiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJBdXRvcmlkYWQgcXVlIGF1dG9yaXphIHkgdmVyaWZpY2EgZWwgY3VtcGxpbWllbnRvIGRlbCBlbWlzb3IgZGUgbW9uZWRlcm9zIGVsZWN0csOzbmljb3MuIgogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCxBdXRob3JpdHkiCiAgICAgICAgfQoKCiAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgogICAgICAgICAqIFJFTEFDSU9ORVMgREVMIE5JVkVMIDEgLSBDT05URVhUTwogICAgICAgICAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgIGVtcHJlc2FDbGllbnRlIC0+IHBsYXRhZm9ybWFQcm9maW5zYSAiUmVnaXN0cmEgY29sYWJvcmFkb3Jlcywgc29saWNpdGEgdGFyamV0YXMsIGdlbmVyYSBkaXNwZXJzaW9uZXMgeSBjb25zdWx0YSByZXBvcnRlcyIgIkhUVFBTIgoKICAgICAgICBiZW5lZmljaWFyaW8gLT4gcGxhdGFmb3JtYVByb2ZpbnNhICJBY3RpdmEgeSBhZG1pbmlzdHJhIHN1IG1vbmVkZXJvLCBjb25zdWx0YSBzYWxkbyB5IG1vdmltaWVudG9zIiAiQXBwIG3Ds3ZpbCAvIEhUVFBTIgoKICAgICAgICBvcGVyYWRvclByb2ZpbnNhIC0+IHBsYXRhZm9ybWFQcm9maW5zYSAiQWRtaW5pc3RyYSBsYSBvcGVyYWNpw7NuIGRlbCBtb25lZGVybyIgIkhUVFBTIC8gTUZBIgoKICAgICAgICB0ZXNvcmVyaWFDb250YWJpbGlkYWQgLT4gcGxhdGFmb3JtYVByb2ZpbnNhICJWYWxpZGEgcGFnb3MsIGF1dG9yaXphIGRpc3BlcnNpb25lcyB5IHJlYWxpemEgY29uY2lsaWFjaW9uZXMiICJIVFRQUyAvIE1GQSIKCiAgICAgICAgc29wb3J0ZVByb2ZpbnNhIC0+IHBsYXRhZm9ybWFQcm9maW5zYSAiQXRpZW5kZSBibG9xdWVvcywgcmVwb3NpY2lvbmVzLCBhY2xhcmFjaW9uZXMgZSBpbmNpZGVudGVzIiAiSFRUUFMgLyBNRkEiCgogICAgICAgIHBsYXRhZm9ybWFQcm9maW5zYSAtPiBwcm9jZXNhZG9yRXh0ZXJubyAiU29saWNpdGEgZW1pc2nDs24gdMOpY25pY2EsIGRpc3BlcnNpb25lcywgYmxvcXVlb3MgeSBjb25zdWx0YSBtb3ZpbWllbnRvcyIgIkFQSSBSRVNUIC8gQXJjaGl2b3MiCgogICAgICAgIHByb2Nlc2Fkb3JFeHRlcm5vIC0+IHBsYXRhZm9ybWFQcm9maW5zYSAiTm90aWZpY2EgY29tcHJhcywgcmVjaGF6b3MsIHJldmVyc29zLCBkZXZvbHVjaW9uZXMgeSBjYW1iaW9zIGRlIGVzdGFkbyIgIldlYmhvb2tzIC8gQXJjaGl2b3MiCgogICAgICAgIHByb2Nlc2Fkb3JFeHRlcm5vIC0+IGJhbmNvQmluU3BvbnNvciAiT3BlcmEgZWwgcHJvZ3JhbWEgZGUgdGFyamV0YXMgeSByZWFsaXphIHByb2Nlc29zIGRlIGNvbXBlbnNhY2nDs24iCgogICAgICAgIGJhbmNvQmluU3BvbnNvciAtPiByZWRQYWdvcyAiTWFudGllbmUgbGEgcmVsYWNpw7NuIGNvbiBsYSByZWQgeSBoYWJpbGl0YSBlbCBwcm9ncmFtYSBkZSB0YXJqZXRhcyIKCiAgICAgICAgY29tZXJjaW9zUG9zIC0+IHJlZFBhZ29zICJFbnbDrWEgdHJhbnNhY2Npb25lcyBkZSBjb21wcmEsIGNhbmNlbGFjacOzbiB5IGRldm9sdWNpw7NuIgoKICAgICAgICByZWRQYWdvcyAtPiBwcm9jZXNhZG9yRXh0ZXJubyAiRW5ydXRhIHNvbGljaXR1ZGVzIGRlIGF1dG9yaXphY2nDs24geSBtZW5zYWplcyB0cmFuc2FjY2lvbmFsZXMiCgogICAgICAgIHByb2Nlc2Fkb3JFeHRlcm5vIC0+IHJlZFBhZ29zICJSZXNwb25kZSBhcHJvYmFjaW9uZXMgbyByZWNoYXpvcyIKCiAgICAgICAgcGxhdGFmb3JtYVByb2ZpbnNhIC0+IHNhcCAiRW52w61hIHBlZGlkb3MsIGNvbWlzaW9uZXMsIGZhY3R1cmFzIHkgbW92aW1pZW50b3MgY29udGFibGVzIiAiQVBJIC8gT0RhdGEiCgogICAgICAgIHNhcCAtPiBwbGF0YWZvcm1hUHJvZmluc2EgIlByb3BvcmNpb25hIGNsaWVudGVzLCBwYWdvcywgZmFjdHVyYXMgeSByZWdpc3Ryb3MgY29udGFibGVzIiAiQVBJIC8gT0RhdGEiCgogICAgICAgIHBsYXRhZm9ybWFQcm9maW5zYSAtPiBiYW5jb1JlY2F1ZGFkb3IgIkNvbnN1bHRhIGRlcMOzc2l0b3MgeSBtb3ZpbWllbnRvcyBiYW5jYXJpb3MiICJBUEkgLyBTRlRQIgoKICAgICAgICBwbGF0YWZvcm1hUHJvZmluc2EgLT4gZmFicmljYW50ZVRhcmpldGFzICJFbnbDrWEgw7NyZGVuZXMgZGUgZmFicmljYWNpw7NuIHkgcGVyc29uYWxpemFjacOzbiIgIkFQSSAvIFNGVFAiCgogICAgICAgIHBsYXRhZm9ybWFQcm9maW5zYSAtPiBzZXJ2aWNpb01lbnNhamVyaWEgIlNvbGljaXRhIGVsIGVudsOtbyBkZSBub3RpZmljYWNpb25lcyIgIkFQSSIKCiAgICAgICAgcGxhdGFmb3JtYVByb2ZpbnNhIC0+IHNhdCAiRW50cmVnYSBkb2N1bWVudGFjacOzbiwgZXZpZGVuY2lhcyB5IGF0aWVuZGUgdmVyaWZpY2FjaW9uZXMiCgoKICAgICAgICAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCiAgICAgICAgICogUkVMQUNJT05FUyBERUwgTklWRUwgMiAtIENPTlRFTkVET1JFUwogICAgICAgICAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgIGVtcHJlc2FDbGllbnRlIC0+IHBvcnRhbEVtcHJlc2FyaWFsICJVc2EiICJIVFRQUyIKCiAgICAgICAgYmVuZWZpY2lhcmlvIC0+IGFwcEJlbmVmaWNpYXJpbyAiVXNhIiAiSFRUUFMiCgogICAgICAgIG9wZXJhZG9yUHJvZmluc2EgLT4gcG9ydGFsT3BlcmFjaW9uICJVc2EiICJIVFRQUyAvIE1GQSIKCiAgICAgICAgdGVzb3JlcmlhQ29udGFiaWxpZGFkIC0+IHBvcnRhbE9wZXJhY2lvbiAiVXNhIiAiSFRUUFMgLyBNRkEiCgogICAgICAgIHNvcG9ydGVQcm9maW5zYSAtPiBwb3J0YWxTb3BvcnRlICJVc2EiICJIVFRQUyAvIE1GQSIKCiAgICAgICAgcG9ydGFsRW1wcmVzYXJpYWwgLT4gYXBpR2F0ZXdheSAiQ29uc3VtZSBBUElzIiAiSFRUUFMgLyBKU09OIgoKICAgICAgICBhcHBCZW5lZmljaWFyaW8gLT4gYXBpR2F0ZXdheSAiQ29uc3VtZSBBUElzIiAiSFRUUFMgLyBKU09OIgoKICAgICAgICBwb3J0YWxPcGVyYWNpb24gLT4gYXBpR2F0ZXdheSAiQ29uc3VtZSBBUElzIiAiSFRUUFMgLyBKU09OIgoKICAgICAgICBwb3J0YWxTb3BvcnRlIC0+IGFwaUdhdGV3YXkgIkNvbnN1bWUgQVBJcyIgIkhUVFBTIC8gSlNPTiIKCiAgICAgICAgcG9ydGFsRW1wcmVzYXJpYWwgLT4gaWRlbnRpZGFkQWNjZXNvcyAiQXV0ZW50aWNhIHVzdWFyaW9zIgogICAgICAgIGFwcEJlbmVmaWNpYXJpbyAtPiBpZGVudGlkYWRBY2Nlc29zICJBdXRlbnRpY2EgYmVuZWZpY2lhcmlvcyIKICAgICAgICBwb3J0YWxPcGVyYWNpb24gLT4gaWRlbnRpZGFkQWNjZXNvcyAiQXV0ZW50aWNhIG9wZXJhZG9yZXMgY29uIE1GQSIKICAgICAgICBwb3J0YWxTb3BvcnRlIC0+IGlkZW50aWRhZEFjY2Vzb3MgIkF1dGVudGljYSBwZXJzb25hbCBkZSBzb3BvcnRlIGNvbiBNRkEiCgogICAgICAgIGFwaUdhdGV3YXkgLT4gaWRlbnRpZGFkQWNjZXNvcyAiVmFsaWRhIGlkZW50aWRhZGVzLCBzZXNpb25lcyB5IHBlcm1pc29zIgogICAgICAgIGFwaUdhdGV3YXkgLT4gY29yZU5lZ29jaW8gIkludm9jYSBzZXJ2aWNpb3MgZGUgbmVnb2NpbyIKICAgICAgICBhcGlHYXRld2F5IC0+IGdlc3Rpb25UYXJqZXRhcyAiSW52b2NhIG9wZXJhY2lvbmVzIGRlIHRhcmpldGFzIgogICAgICAgIGFwaUdhdGV3YXkgLT4gc2VydmljaW9EaXNwZXJzaW9uZXMgIkludm9jYSBvcGVyYWNpb25lcyBkZSBkaXNwZXJzacOzbiIKICAgICAgICBhcGlHYXRld2F5IC0+IGFjbGFyYWNpb25lcyAiSW52b2NhIG9wZXJhY2lvbmVzIGRlIHNvcG9ydGUgeSBhY2xhcmFjaW9uZXMiCiAgICAgICAgYXBpR2F0ZXdheSAtPiByZXBvcnRlcyAiU29saWNpdGEgcmVwb3J0ZXMiCgogICAgICAgIGNvcmVOZWdvY2lvIC0+IGJhc2VPcGVyYXRpdmEgIkxlZSB5IGVzY3JpYmUiCiAgICAgICAgY29yZU5lZ29jaW8gLT4gcmVwb3NpdG9yaW9Eb2N1bWVudGFsICJBbG1hY2VuYSB5IGNvbnN1bHRhIGRvY3VtZW50b3MiCiAgICAgICAgY29yZU5lZ29jaW8gLT4gYnVzRXZlbnRvcyAiUHVibGljYSBldmVudG9zIGRlIG5lZ29jaW8iCiAgICAgICAgY29yZU5lZ29jaW8gLT4gaW50ZWdyYWNpb25TYXAgIlNvbGljaXRhIHByb2Nlc29zIGVtcHJlc2FyaWFsZXMiCiAgICAgICAgY29yZU5lZ29jaW8gLT4gYWRhcHRhZG9yUHJvY2VzYWRvciAiU29saWNpdGEgb3BlcmFjaW9uZXMgZGVsIHByb2Nlc2Fkb3IiCiAgICAgICAgY29yZU5lZ29jaW8gLT4gYXVkaXRvcmlhTG9ncyAiUmVnaXN0cmEgYWN0aXZpZGFkZXMiCgogICAgICAgIHNlcnZpY2lvRGlzcGVyc2lvbmVzIC0+IGJhc2VPcGVyYXRpdmEgIkNvbnN1bHRhIHBlZGlkb3MgYXV0b3JpemFkb3MiCiAgICAgICAgc2VydmljaW9EaXNwZXJzaW9uZXMgLT4gbGVkZ2VyQ29udHJvbCAiUmVnaXN0cmEgaW5zdHJ1Y2Npb25lcyB5IG1vdmltaWVudG9zIGRlIGNvbnRyb2wiCiAgICAgICAgc2VydmljaW9EaXNwZXJzaW9uZXMgLT4gYWRhcHRhZG9yUHJvY2VzYWRvciAiRW52w61hIGluc3RydWNjaW9uZXMgZGUgZGlzcGVyc2nDs24iCiAgICAgICAgc2VydmljaW9EaXNwZXJzaW9uZXMgLT4gYnVzRXZlbnRvcyAiUHVibGljYSByZXN1bHRhZG9zIGRlIGRpc3BlcnNpw7NuIgogICAgICAgIHNlcnZpY2lvRGlzcGVyc2lvbmVzIC0+IGF1ZGl0b3JpYUxvZ3MgIlJlZ2lzdHJhIGFjdGl2aWRhZGVzIGNyw610aWNhcyIKCiAgICAgICAgZ2VzdGlvblRhcmpldGFzIC0+IGJhc2VPcGVyYXRpdmEgIkNvbnN1bHRhIHkgYWN0dWFsaXphIGVzdGFkb3MiCiAgICAgICAgZ2VzdGlvblRhcmpldGFzIC0+IGFkYXB0YWRvclByb2Nlc2Fkb3IgIlNvbGljaXRhIGVtaXNpw7NuLCBhY3RpdmFjacOzbiwgYmxvcXVlbyB5IHJlcG9zaWNpw7NuIgogICAgICAgIGdlc3Rpb25UYXJqZXRhcyAtPiBpbnRlZ3JhY2lvblRhcmpldGFzICJTb2xpY2l0YSBmYWJyaWNhY2nDs24geSBwZXJzb25hbGl6YWNpw7NuIgogICAgICAgIGdlc3Rpb25UYXJqZXRhcyAtPiBidXNFdmVudG9zICJQdWJsaWNhIGNhbWJpb3MgZGUgZXN0YWRvIgogICAgICAgIGdlc3Rpb25UYXJqZXRhcyAtPiBhdWRpdG9yaWFMb2dzICJSZWdpc3RyYSBvcGVyYWNpb25lcyBkZSB0YXJqZXRhIgoKICAgICAgICBhZGFwdGFkb3JQcm9jZXNhZG9yIC0+IHByb2Nlc2Fkb3JFeHRlcm5vICJDb25zdW1lIEFQSXMgZGUgZW1pc2nDs24geSBwcm9jZXNhbWllbnRvIiAiSFRUUFMgLyBBUEkgUkVTVCIKCiAgICAgICAgcHJvY2VzYWRvckV4dGVybm8gLT4gYWRhcHRhZG9yUHJvY2VzYWRvciAiRW52w61hIGV2ZW50b3MgdHJhbnNhY2Npb25hbGVzIiAiV2ViaG9va3MgLyBBcmNoaXZvcyIKCiAgICAgICAgYWRhcHRhZG9yUHJvY2VzYWRvciAtPiBsZWRnZXJDb250cm9sICJSZWdpc3RyYSBjb21wcmFzLCByZXZlcnNvcyB5IGRldm9sdWNpb25lcyIKICAgICAgICBhZGFwdGFkb3JQcm9jZXNhZG9yIC0+IGJ1c0V2ZW50b3MgIlB1YmxpY2EgZXZlbnRvcyB0cmFuc2FjY2lvbmFsZXMiCiAgICAgICAgYWRhcHRhZG9yUHJvY2VzYWRvciAtPiBhdWRpdG9yaWFMb2dzICJSZWdpc3RyYSBzb2xpY2l0dWRlcyB5IHJlc3B1ZXN0YXMiCgogICAgICAgIGNvbmNpbGlhY2lvbiAtPiBsZWRnZXJDb250cm9sICJDb25zdWx0YSBtb3ZpbWllbnRvcyBpbnRlcm5vcyIKICAgICAgICBjb25jaWxpYWNpb24gLT4gYmFzZU9wZXJhdGl2YSAiQ29uc3VsdGEgcGVkaWRvcyB5IGRpc3BlcnNpb25lcyIKICAgICAgICBjb25jaWxpYWNpb24gLT4gYWRhcHRhZG9yUHJvY2VzYWRvciAiT2J0aWVuZSB0cmFuc2FjY2lvbmVzIHkgc2FsZG9zIGRlbCBwcm9jZXNhZG9yIgogICAgICAgIGNvbmNpbGlhY2lvbiAtPiBpbnRlZ3JhY2lvbkJhbmNhcmlhICJPYnRpZW5lIGRlcMOzc2l0b3MgeSBsaXF1aWRhY2lvbmVzIgogICAgICAgIGNvbmNpbGlhY2lvbiAtPiBpbnRlZ3JhY2lvblNhcCAiT2J0aWVuZSByZWdpc3Ryb3MgY29udGFibGVzIgogICAgICAgIGNvbmNpbGlhY2lvbiAtPiBhdWRpdG9yaWFMb2dzICJSZWdpc3RyYSByZXN1bHRhZG9zIHkgZGlmZXJlbmNpYXMiCiAgICAgICAgY29uY2lsaWFjaW9uIC0+IGJ1c0V2ZW50b3MgIlB1YmxpY2EgZGlmZXJlbmNpYXMgZGUgY29uY2lsaWFjacOzbiIKCiAgICAgICAgYWNsYXJhY2lvbmVzIC0+IGJhc2VPcGVyYXRpdmEgIlJlZ2lzdHJhIHkgY29uc3VsdGEgY2Fzb3MiCiAgICAgICAgYWNsYXJhY2lvbmVzIC0+IGxlZGdlckNvbnRyb2wgIkNvbnN1bHRhIHRyYW5zYWNjaW9uZXMgcmVsYWNpb25hZGFzIgogICAgICAgIGFjbGFyYWNpb25lcyAtPiBhZGFwdGFkb3JQcm9jZXNhZG9yICJTb2xpY2l0YSByZXZlcnNvcywgZGV2b2x1Y2lvbmVzIG8gaW52ZXN0aWdhY2lvbmVzIgogICAgICAgIGFjbGFyYWNpb25lcyAtPiByZXBvc2l0b3Jpb0RvY3VtZW50YWwgIkFsbWFjZW5hIGV2aWRlbmNpYXMiCiAgICAgICAgYWNsYXJhY2lvbmVzIC0+IGJ1c0V2ZW50b3MgIlB1YmxpY2EgY2FtYmlvcyBkZWwgY2FzbyIKICAgICAgICBhY2xhcmFjaW9uZXMgLT4gYXVkaXRvcmlhTG9ncyAiUmVnaXN0cmEgYWNjaW9uZXMiCgogICAgICAgIHJlcG9ydGVzIC0+IGJhc2VPcGVyYXRpdmEgIkNvbnN1bHRhIGluZm9ybWFjacOzbiBvcGVyYXRpdmEiCiAgICAgICAgcmVwb3J0ZXMgLT4gbGVkZ2VyQ29udHJvbCAiQ29uc3VsdGEgbW92aW1pZW50b3MgeSBzYWxkb3MgZGUgY29udHJvbCIKICAgICAgICByZXBvcnRlcyAtPiBhdWRpdG9yaWFMb2dzICJDb25zdWx0YSBldmlkZW5jaWEgYXVkaXRhYmxlIgoKICAgICAgICBidXNFdmVudG9zIC0+IG5vdGlmaWNhY2lvbmVzICJFbnRyZWdhIGV2ZW50b3Mgbm90aWZpY2FibGVzIgogICAgICAgIG5vdGlmaWNhY2lvbmVzIC0+IHNlcnZpY2lvTWVuc2FqZXJpYSAiRW52w61hIGNvcnJlb3MsIFNNUyB5IG5vdGlmaWNhY2lvbmVzIHB1c2giICJBUEkiCgogICAgICAgIGludGVncmFjaW9uU2FwIC0+IHNhcCAiSW50ZXJjYW1iaWEgY2xpZW50ZXMsIHBhZ29zLCBmYWN0dXJhcyB5IGNvbnRhYmlsaWRhZCIgIk9EYXRhIC8gQVBJIgoKICAgICAgICBpbnRlZ3JhY2lvbkJhbmNhcmlhIC0+IGJhbmNvUmVjYXVkYWRvciAiQ29uc3VsdGEgZGVww7NzaXRvcywgZXN0YWRvcyBkZSBjdWVudGEgeSBsaXF1aWRhY2lvbmVzIiAiQVBJIC8gU0ZUUCIKCiAgICAgICAgaW50ZWdyYWNpb25UYXJqZXRhcyAtPiBmYWJyaWNhbnRlVGFyamV0YXMgIkVudsOtYSDDs3JkZW5lcyBkZSBmYWJyaWNhY2nDs24geSByZWNpYmUgZXN0YWRvcyIgIkFQSSAvIFNGVFAiCgogICAgICAgIGFwaUdhdGV3YXkgLT4gYXVkaXRvcmlhTG9ncyAiUmVnaXN0cmEgYWNjZXNvcyB5IHNvbGljaXR1ZGVzIgogICAgICAgIGlkZW50aWRhZEFjY2Vzb3MgLT4gYXVkaXRvcmlhTG9ncyAiUmVnaXN0cmEgYXV0ZW50aWNhY2lvbmVzIHkgY2FtYmlvcyBkZSBwZXJtaXNvcyIKICAgICAgICBwb3J0YWxPcGVyYWNpb24gLT4gYXVkaXRvcmlhTG9ncyAiUmVnaXN0cmEgYWNjaW9uZXMgYWRtaW5pc3RyYXRpdmFzIgogICAgfQoKCiAgICB2aWV3cyB7CgogICAgICAgIC8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioKICAgICAgICAgKiBDNCBOSVZFTCAxIC0gQ09OVEVYVE8KICAgICAgICAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwoKICAgICAgICBzeXN0ZW1Db250ZXh0IHBsYXRhZm9ybWFQcm9maW5zYSAiQzQtTml2ZWwtMS1Db250ZXh0byIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiQ29udGV4dG8gZGUgbGEgUGxhdGFmb3JtYSBkZSBNb25lZGVybyBFbGVjdHLDs25pY28gUFJPRklOU0EgeSBzdXMgcmVsYWNpb25lcyBjb24gdXN1YXJpb3MgeSBzaXN0ZW1hcyBleHRlcm5vcy4iCgogICAgICAgICAgICBpbmNsdWRlIGVtcHJlc2FDbGllbnRlCiAgICAgICAgICAgIGluY2x1ZGUgYmVuZWZpY2lhcmlvCiAgICAgICAgICAgIGluY2x1ZGUgb3BlcmFkb3JQcm9maW5zYQogICAgICAgICAgICBpbmNsdWRlIHRlc29yZXJpYUNvbnRhYmlsaWRhZAogICAgICAgICAgICBpbmNsdWRlIHNvcG9ydGVQcm9maW5zYQoKICAgICAgICAgICAgaW5jbHVkZSBwbGF0YWZvcm1hUHJvZmluc2EKICAgICAgICAgICAgaW5jbHVkZSBwcm9jZXNhZG9yRXh0ZXJubwogICAgICAgICAgICBpbmNsdWRlIGJhbmNvQmluU3BvbnNvcgogICAgICAgICAgICBpbmNsdWRlIHJlZFBhZ29zCiAgICAgICAgICAgIGluY2x1ZGUgY29tZXJjaW9zUG9zCiAgICAgICAgICAgIGluY2x1ZGUgc2FwCiAgICAgICAgICAgIGluY2x1ZGUgYmFuY29SZWNhdWRhZG9yCiAgICAgICAgICAgIGluY2x1ZGUgZmFicmljYW50ZVRhcmpldGFzCiAgICAgICAgICAgIGluY2x1ZGUgc2VydmljaW9NZW5zYWplcmlhCiAgICAgICAgICAgIGluY2x1ZGUgc2F0CgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyCiAgICAgICAgfQoKCiAgICAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgogICAgICAgICAqIEM0IE5JVkVMIDIgLSBDT05URU5FRE9SRVMKICAgICAgICAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwoKICAgICAgICBjb250YWluZXIgcGxhdGFmb3JtYVByb2ZpbnNhICJDNC1OaXZlbC0yLUNvbnRlbmVkb3JlcyIgewogICAgICAgICAgICBkZXNjcmlwdGlvbiAiQ29udGVuZWRvcmVzIHByaW5jaXBhbGVzIGRlIGxhIFBsYXRhZm9ybWEgUFJPRklOU0EgZSBpbnRlZ3JhY2lvbmVzIGNvbiBzaXN0ZW1hcyBleHRlcm5vcy4iCgogICAgICAgICAgICBpbmNsdWRlICoKCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgoKICAgICAgICAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCiAgICAgICAgICogRVNUSUxPUwogICAgICAgICAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgogICAgICAgIHN0eWxlcyB7CgogICAgICAgICAgICBlbGVtZW50ICJFbGVtZW50IiB7CiAgICAgICAgICAgICAgICBzaGFwZSBSb3VuZGVkQm94CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNGNUY1RjUKICAgICAgICAgICAgICAgIGNvbG9yICMxRjI5MzcKICAgICAgICAgICAgICAgIHN0cm9rZSAjNkI3MjgwCiAgICAgICAgICAgICAgICBmb250U2l6ZSAyMgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIHNoYXBlIFBlcnNvbgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMEI0RjZDCiAgICAgICAgICAgICAgICBjb2xvciAjRkZGRkZGCiAgICAgICAgICAgICAgICBzdHJva2UgIzA4M0I1MAogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJDbGllbnRlIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxMTY5OEUKICAgICAgICAgICAgICAgIGNvbG9yICNGRkZGRkYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiQmVuZWZpY2lhcmlvIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxQTc1OUYKICAgICAgICAgICAgICAgIGNvbG9yICNGRkZGRkYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiUHJvZmluc2EiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzE4NEU3NwogICAgICAgICAgICAgICAgY29sb3IgI0ZGRkZGRgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzJFNkY5NQogICAgICAgICAgICAgICAgY29sb3IgI0ZGRkZGRgogICAgICAgICAgICAgICAgc3Ryb2tlICMxRjRFNkIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNCRkQ3RUEKICAgICAgICAgICAgICAgIGNvbG9yICMxMDJBNDMKICAgICAgICAgICAgICAgIHN0cm9rZSAjNDg2NTgxCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIldlYiIgewogICAgICAgICAgICAgICAgc2hhcGUgV2ViQnJvd3NlcgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJNb2JpbGUiIHsKICAgICAgICAgICAgICAgIHNoYXBlIE1vYmlsZURldmljZVBvcnRyYWl0CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIkFQSSIgewogICAgICAgICAgICAgICAgc2hhcGUgSGV4YWdvbgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjODlDMkQ5CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIkNvcmUiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzYxQTVDMgogICAgICAgICAgICAgICAgY29sb3IgI0ZGRkZGRgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJJbnRlZ3JhdGlvbiIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjQTlENkU1CiAgICAgICAgICAgICAgICBjb2xvciAjMTAyQTQzCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIk1lc3NhZ2luZyIgewogICAgICAgICAgICAgICAgc2hhcGUgUGlwZQogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjQTlENkU1CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjRDlFQUYyCiAgICAgICAgICAgICAgICBjb2xvciAjMTAyQTQzCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIkxlZGdlciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTlEOThDCiAgICAgICAgICAgICAgICBjb2xvciAjMTYzQTFCCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIlN0b3JhZ2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEZvbGRlcgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjRDlFQUYyCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIlNlY3VyaXR5IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNGNEEyNjEKICAgICAgICAgICAgICAgIGNvbG9yICMzRDI0MEIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiUmVwb3J0aW5nIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNFOUM0NkEKICAgICAgICAgICAgICAgIGNvbG9yICMzRDMxMDYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiRXh0ZXJuYWwiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzZCNzI4MAogICAgICAgICAgICAgICAgY29sb3IgI0ZGRkZGRgogICAgICAgICAgICAgICAgc3Ryb2tlICM0QjU1NjMKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiUHJvY2Vzc29yIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM3QjJDQkYKICAgICAgICAgICAgICAgIGNvbG9yICNGRkZGRkYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiQmFuayIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMzg2NjQxCiAgICAgICAgICAgICAgICBjb2xvciAjRkZGRkZGCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIk5ldHdvcmsiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzlENEVERAogICAgICAgICAgICAgICAgY29sb3IgI0ZGRkZGRgogICAgICAgICAgICB9CgogICAgICAgICAgICBlbGVtZW50ICJDb21tZXJjZSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjQkM2QzI1CiAgICAgICAgICAgICAgICBjb2xvciAjRkZGRkZGCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIlNBUCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMDA3MEYyCiAgICAgICAgICAgICAgICBjb2xvciAjRkZGRkZGCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGVsZW1lbnQgIlN1cHBsaWVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM2MDZDMzgKICAgICAgICAgICAgICAgIGNvbG9yICNGRkZGRkYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZWxlbWVudCAiQXV0aG9yaXR5IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM5QjIyMjYKICAgICAgICAgICAgICAgIGNvbG9yICNGRkZGRkYKICAgICAgICAgICAgfQoKICAgICAgICAgICAgcmVsYXRpb25zaGlwICJSZWxhdGlvbnNoaXAiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM1QjY3NzAKICAgICAgICAgICAgICAgIHRoaWNrbmVzcyAyCiAgICAgICAgICAgICAgICByb3V0aW5nIE9ydGhvZ29uYWwKICAgICAgICAgICAgICAgIGZvbnRTaXplIDE4CiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoZW1lIGRlZmF1bHQKICAgIH0KCiAgICBjb25maWd1cmF0aW9uIHsKICAgICAgICBzY29wZSBzb2Z0d2FyZXN5c3RlbQogICAgfQp9",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#89c2d9",
+          "shape" : "Hexagon",
+          "tag" : "API"
+        }, {
+          "background" : "#9b2226",
+          "color" : "#ffffff",
+          "tag" : "Authority"
+        }, {
+          "background" : "#386641",
+          "color" : "#ffffff",
+          "tag" : "Bank"
+        }, {
+          "background" : "#1a759f",
+          "color" : "#ffffff",
+          "tag" : "Beneficiario"
+        }, {
+          "background" : "#11698e",
+          "color" : "#ffffff",
+          "tag" : "Cliente"
+        }, {
+          "background" : "#bc6c25",
+          "color" : "#ffffff",
+          "tag" : "Commerce"
+        }, {
+          "background" : "#bfd7ea",
+          "color" : "#102a43",
+          "stroke" : "#486581",
+          "tag" : "Container"
+        }, {
+          "background" : "#61a5c2",
+          "color" : "#ffffff",
+          "tag" : "Core"
+        }, {
+          "background" : "#d9eaf2",
+          "color" : "#102a43",
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#f5f5f5",
+          "color" : "#1f2937",
+          "fontSize" : 22,
+          "shape" : "RoundedBox",
+          "stroke" : "#6b7280",
+          "tag" : "Element"
+        }, {
+          "background" : "#6b7280",
+          "color" : "#ffffff",
+          "stroke" : "#4b5563",
+          "tag" : "External"
+        }, {
+          "background" : "#a9d6e5",
+          "color" : "#102a43",
+          "tag" : "Integration"
+        }, {
+          "background" : "#99d98c",
+          "color" : "#163a1b",
+          "tag" : "Ledger"
+        }, {
+          "background" : "#a9d6e5",
+          "shape" : "Pipe",
+          "tag" : "Messaging"
+        }, {
+          "shape" : "MobileDevicePortrait",
+          "tag" : "Mobile"
+        }, {
+          "background" : "#9d4edd",
+          "color" : "#ffffff",
+          "tag" : "Network"
+        }, {
+          "background" : "#0b4f6c",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "stroke" : "#083b50",
+          "tag" : "Person"
+        }, {
+          "background" : "#7b2cbf",
+          "color" : "#ffffff",
+          "tag" : "Processor"
+        }, {
+          "background" : "#184e77",
+          "color" : "#ffffff",
+          "tag" : "Profinsa"
+        }, {
+          "background" : "#e9c46a",
+          "color" : "#3d3106",
+          "tag" : "Reporting"
+        }, {
+          "background" : "#0070f2",
+          "color" : "#ffffff",
+          "tag" : "SAP"
+        }, {
+          "background" : "#f4a261",
+          "color" : "#3d240b",
+          "tag" : "Security"
+        }, {
+          "background" : "#2e6f95",
+          "color" : "#ffffff",
+          "stroke" : "#1f4e6b",
+          "tag" : "Software System"
+        }, {
+          "background" : "#d9eaf2",
+          "shape" : "Folder",
+          "tag" : "Storage"
+        }, {
+          "background" : "#606c38",
+          "color" : "#ffffff",
+          "tag" : "Supplier"
+        }, {
+          "shape" : "WebBrowser",
+          "tag" : "Web"
+        } ],
+        "relationships" : [ {
+          "color" : "#5b6770",
+          "fontSize" : 18,
+          "routing" : "Orthogonal",
+          "tag" : "Relationship",
+          "thickness" : 2
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Contenedores principales de la Plataforma PROFINSA e integraciones con sistemas externos.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "19",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "20",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "21",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "22",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "23",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "24",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "26",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "27",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "34",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "35",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "36",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "C4-Nivel-2-Contenedores",
+      "name" : "Container View: Plataforma de Monedero Electrónico PROFINSA",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "100"
+      }, {
+        "id" : "101"
+      }, {
+        "id" : "102"
+      }, {
+        "id" : "103"
+      }, {
+        "id" : "104"
+      }, {
+        "id" : "105"
+      }, {
+        "id" : "106"
+      }, {
+        "id" : "107"
+      }, {
+        "id" : "108"
+      }, {
+        "id" : "109"
+      }, {
+        "id" : "110"
+      }, {
+        "id" : "111"
+      }, {
+        "id" : "112"
+      }, {
+        "id" : "113"
+      }, {
+        "id" : "114"
+      }, {
+        "id" : "115"
+      }, {
+        "id" : "116"
+      }, {
+        "id" : "117"
+      }, {
+        "id" : "118"
+      }, {
+        "id" : "119"
+      }, {
+        "id" : "56"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "58"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "62"
+      }, {
+        "id" : "63"
+      }, {
+        "id" : "64"
+      }, {
+        "id" : "65"
+      }, {
+        "id" : "66"
+      }, {
+        "id" : "67"
+      }, {
+        "id" : "68"
+      }, {
+        "id" : "69"
+      }, {
+        "id" : "70"
+      }, {
+        "id" : "71"
+      }, {
+        "id" : "72"
+      }, {
+        "id" : "73"
+      }, {
+        "id" : "74"
+      }, {
+        "id" : "75"
+      }, {
+        "id" : "76"
+      }, {
+        "id" : "77"
+      }, {
+        "id" : "78"
+      }, {
+        "id" : "79"
+      }, {
+        "id" : "80"
+      }, {
+        "id" : "81"
+      }, {
+        "id" : "82"
+      }, {
+        "id" : "83"
+      }, {
+        "id" : "84"
+      }, {
+        "id" : "85"
+      }, {
+        "id" : "86"
+      }, {
+        "id" : "87"
+      }, {
+        "id" : "88"
+      }, {
+        "id" : "89"
+      }, {
+        "id" : "90"
+      }, {
+        "id" : "91"
+      }, {
+        "id" : "92"
+      }, {
+        "id" : "93"
+      }, {
+        "id" : "94"
+      }, {
+        "id" : "95"
+      }, {
+        "id" : "96"
+      }, {
+        "id" : "97"
+      }, {
+        "id" : "98"
+      }, {
+        "id" : "99"
+      } ],
+      "softwareSystemId" : "6"
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Contexto de la Plataforma de Monedero Electrónico PROFINSA y sus relaciones con usuarios y sistemas externos.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "30",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "34",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "35",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "36",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "37",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "C4-Nivel-1-Contexto",
+      "name" : "System Context View: Plataforma de Monedero Electrónico PROFINSA",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "38"
+      }, {
+        "id" : "39"
+      }, {
+        "id" : "40"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "42"
+      }, {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      } ],
+      "softwareSystemId" : "6"
+    } ]
+  }
+}
