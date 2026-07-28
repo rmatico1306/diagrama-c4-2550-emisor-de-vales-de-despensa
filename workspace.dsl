@@ -17,12 +17,17 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
         }
 
         tesoreriaContabilidad = person "Tesorería y Contabilidad" {
-            description "Personal que valida pagos, supervisa dispersiones, realiza conciliaciones y registra operaciones contables."
+            description "Personal que valida el pago del cliente antes de la autorización del pedido y consulta información financiera relacionada."
             tags "Profinsa"
         }
 
-        soporteProfinsa = person "Soporte PROFINSA" {
-            description "Personal que atiende bloqueos, reposiciones, aclaraciones e incidentes de clientes y beneficiarios."
+        atencionProfinsa = person "Responsable de atención PROFINSA" {
+            description "Rol pendiente de definición encargado de atender solicitudes, bloqueos, aclaraciones e incidentes de clientes y beneficiarios."
+            tags "Profinsa"
+        }
+
+        cumplimientoProfinsa = person "Responsable de cumplimiento PROFINSA" {
+            description "Rol pendiente de definición encargado de preparar evidencias y atender el proceso de autorización y verificación ante el SAT."
             tags "Profinsa"
         }
 
@@ -52,12 +57,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
             portalOperacion = container "Portal operativo PROFINSA" {
                 description "Permite administrar clientes, contratos, pedidos, tarjetas, dispersiones, excepciones y conciliaciones."
-                technology "Aplicación web"
-                tags "Web"
-            }
-
-            portalSoporte = container "Portal de soporte" {
-                description "Permite atender aclaraciones, bloqueos, desbloqueos, reposiciones y seguimiento de incidentes."
                 technology "Aplicación web"
                 tags "Web"
             }
@@ -103,7 +102,7 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
             }
 
             conciliacion = container "Motor de conciliación" {
-                description "Compara pedidos, dispersiones, transacciones, saldos, liquidaciones bancarias y registros contables."
+                description "Compara pedidos, dispersiones, transacciones, saldos y registros contables para identificar diferencias."
                 technology "Servicio backend / Procesamiento por lotes"
                 tags "Core"
             }
@@ -140,12 +139,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
             integracionSap = container "Adaptador SAP" {
                 description "Integra clientes, pedidos, pagos, facturación, comisiones y registros contables con SAP."
                 technology "OData / API REST / Servicios SAP"
-                tags "Integration"
-            }
-
-            integracionBancaria = container "Adaptador bancario" {
-                description "Obtiene depósitos, movimientos y estados de cuenta para validar fondos y realizar conciliación."
-                technology "API bancaria / SFTP / Archivos"
                 tags "Integration"
             }
 
@@ -201,11 +194,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
             tags "External,Processor"
         }
 
-        bancoBinSponsor = softwareSystem "Banco / BIN Sponsor" {
-            description "Proporciona el BIN, mantiene la relación con la red de pagos y participa en la liquidación del programa."
-            tags "External,Bank"
-        }
-
         redPagos = softwareSystem "Red de pagos" {
             description "Red utilizada para enrutar y procesar las transacciones, por ejemplo Visa, Mastercard, Carnet u otra."
             tags "External,Network"
@@ -219,11 +207,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
         sap = softwareSystem "SAP" {
             description "Sistema empresarial utilizado para clientes, facturación, contabilidad, cuentas por cobrar y conciliación."
             tags "External,SAP"
-        }
-
-        bancoRecaudador = softwareSystem "Banco recaudador PROFINSA" {
-            description "Recibe los recursos de las empresas clientes antes de la dispersión."
-            tags "External,Bank"
         }
 
         fabricanteTarjetas = softwareSystem "Fabricante y personalizador de tarjetas" {
@@ -252,17 +235,18 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
         operadorProfinsa -> plataformaProfinsa "Administra la operación del monedero" "HTTPS / MFA"
 
-        tesoreriaContabilidad -> plataformaProfinsa "Valida pagos, autoriza dispersiones y realiza conciliaciones" "HTTPS / MFA"
+        tesoreriaContabilidad -> plataformaProfinsa "Valida el pago del cliente y consulta información financiera del pedido" "HTTPS / MFA"
 
-        soporteProfinsa -> plataformaProfinsa "Atiende bloqueos, reposiciones, aclaraciones e incidentes" "HTTPS / MFA"
+        atencionProfinsa -> plataformaProfinsa "Atiende solicitudes, bloqueos, aclaraciones e incidentes" "HTTPS / MFA"
 
+        cumplimientoProfinsa -> plataformaProfinsa "Consulta reportes y obtiene evidencias de cumplimiento" "HTTPS / MFA"
+
+        cumplimientoProfinsa -> sat "Presenta documentación y atiende procesos de autorización y verificación" "Portal / Expediente documental"
         plataformaProfinsa -> procesadorExterno "Solicita emisión técnica, dispersiones, bloqueos y consulta movimientos" "API REST / Archivos"
 
         procesadorExterno -> plataformaProfinsa "Notifica compras, rechazos, reversos, devoluciones y cambios de estado" "Webhooks / Archivos"
 
-        procesadorExterno -> bancoBinSponsor "Opera el programa de tarjetas y realiza procesos de compensación"
 
-        bancoBinSponsor -> redPagos "Mantiene la relación con la red y habilita el programa de tarjetas"
 
         comerciosPos -> redPagos "Envía transacciones de compra, cancelación y devolución"
 
@@ -274,13 +258,11 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
         sap -> plataformaProfinsa "Proporciona clientes, pagos, facturas y registros contables" "API / OData"
 
-        plataformaProfinsa -> bancoRecaudador "Consulta depósitos y movimientos bancarios" "API / SFTP"
 
         plataformaProfinsa -> fabricanteTarjetas "Envía órdenes de fabricación y personalización" "API / SFTP"
 
         plataformaProfinsa -> servicioMensajeria "Solicita el envío de notificaciones" "API"
 
-        plataformaProfinsa -> sat "Entrega documentación, evidencias y atiende verificaciones"
 
 
         /************************************************************
@@ -295,7 +277,9 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
         tesoreriaContabilidad -> portalOperacion "Usa" "HTTPS / MFA"
 
-        soporteProfinsa -> portalSoporte "Usa" "HTTPS / MFA"
+        cumplimientoProfinsa -> portalOperacion "Consulta reportes y evidencias" "HTTPS / MFA"
+
+        atencionProfinsa -> portalOperacion "Atiende solicitudes, aclaraciones, bloqueos e incidentes" "HTTPS / MFA"
 
         portalEmpresarial -> apiGateway "Consume APIs" "HTTPS / JSON"
 
@@ -303,12 +287,10 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
         portalOperacion -> apiGateway "Consume APIs" "HTTPS / JSON"
 
-        portalSoporte -> apiGateway "Consume APIs" "HTTPS / JSON"
 
         portalEmpresarial -> identidadAccesos "Autentica usuarios"
         appBeneficiario -> identidadAccesos "Autentica beneficiarios"
         portalOperacion -> identidadAccesos "Autentica operadores con MFA"
-        portalSoporte -> identidadAccesos "Autentica personal de soporte con MFA"
 
         apiGateway -> identidadAccesos "Valida identidades, sesiones y permisos"
         apiGateway -> coreNegocio "Invoca servicios de negocio"
@@ -347,7 +329,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
         conciliacion -> ledgerControl "Consulta movimientos internos"
         conciliacion -> baseOperativa "Consulta pedidos y dispersiones"
         conciliacion -> adaptadorProcesador "Obtiene transacciones y saldos del procesador"
-        conciliacion -> integracionBancaria "Obtiene depósitos y liquidaciones"
         conciliacion -> integracionSap "Obtiene registros contables"
         conciliacion -> auditoriaLogs "Registra resultados y diferencias"
         conciliacion -> busEventos "Publica diferencias de conciliación"
@@ -368,7 +349,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
 
         integracionSap -> sap "Intercambia clientes, pagos, facturas y contabilidad" "OData / API"
 
-        integracionBancaria -> bancoRecaudador "Consulta depósitos, estados de cuenta y liquidaciones" "API / SFTP"
 
         integracionTarjetas -> fabricanteTarjetas "Envía órdenes de fabricación y recibe estados" "API / SFTP"
 
@@ -391,15 +371,14 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
             include beneficiario
             include operadorProfinsa
             include tesoreriaContabilidad
-            include soporteProfinsa
+            include atencionProfinsa
+            include cumplimientoProfinsa
 
             include plataformaProfinsa
             include procesadorExterno
-            include bancoBinSponsor
             include redPagos
             include comerciosPos
             include sap
-            include bancoRecaudador
             include fabricanteTarjetas
             include servicioMensajeria
             include sat
@@ -415,7 +394,39 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
         container plataformaProfinsa "C4-Nivel-2-Contenedores" {
             description "Contenedores principales de la Plataforma PROFINSA e integraciones con sistemas externos."
 
-            include *
+            include empresaCliente
+            include beneficiario
+            include operadorProfinsa
+            include tesoreriaContabilidad
+            include atencionProfinsa
+
+            include portalEmpresarial
+            include appBeneficiario
+            include portalOperacion
+            include apiGateway
+            include identidadAccesos
+            include coreNegocio
+            include servicioDispersiones
+            include gestionTarjetas
+            include conciliacion
+            include aclaraciones
+            include reportes
+            include notificaciones
+            include adaptadorProcesador
+            include integracionSap
+            include integracionTarjetas
+            include busEventos
+            include baseOperativa
+            include ledgerControl
+            include repositorioDocumental
+            include auditoriaLogs
+
+            include procesadorExterno
+            include redPagos
+            include comerciosPos
+            include sap
+            include fabricanteTarjetas
+            include servicioMensajeria
 
             autolayout lr
         }
