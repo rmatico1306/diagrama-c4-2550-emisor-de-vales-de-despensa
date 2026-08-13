@@ -1,8 +1,18 @@
-workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual preliminar para la emisión y operación de monederos electrónicos de vales de despensa." {
+workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura C4 actualizada del MVP en AWS, sin dependencia de SAP y con facturación desde la plataforma mediante un PAC." {
 
     model {
-        empresaCliente = person "Empresa cliente" {
-            description "Empresa que contrata el servicio, registra colaboradores, solicita tarjetas y genera pedidos de dispersión."
+        empresaCliente = person "Administrador / Manager del cliente" {
+            description "Administra usuarios y accesos de la empresa cliente y consulta información operativa. No genera ni autoriza pedidos salvo que tenga un perfil operativo adicional."
+            tags "Cliente"
+        }
+
+        generadorPedidoCliente = person "Usuario generador de pedido" {
+            description "Registra beneficiarios, solicita tarjetas y genera pedidos de dispersión. No puede autorizar el mismo pedido."
+            tags "Cliente"
+        }
+
+        autorizadorPedidoCliente = person "Usuario autorizador de pedido" {
+            description "Revisa, autoriza o rechaza los pedidos generados por la empresa cliente antes de la emisión de la proforma."
             tags "Cliente"
         }
 
@@ -12,432 +22,497 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
         }
 
         operadorProfinsa = person "Operador PROFINSA" {
-            description "Personal encargado de administrar clientes, beneficiarios, tarjetas, pedidos, dispersiones y aclaraciones."
+            description "Administra clientes, beneficiarios, tarjetas, pedidos, dispersiones, excepciones y conciliaciones."
             tags "Profinsa"
         }
 
-        tesoreriaContabilidad = person "Tesorería y Contabilidad" {
-            description "Personal que valida el pago del cliente antes de la autorización del pedido y consulta información financiera relacionada."
+        tesoreria = person "Tesorería PROFINSA" {
+            description "Valida que el pago del cliente se encuentre reflejado en banco y asociado al cliente, folio, proforma e importe antes de facturar."
             tags "Profinsa"
         }
 
-        atencionProfinsa = person "Responsable de atención PROFINSA" {
-            description "Rol pendiente de definición encargado de atender solicitudes, bloqueos, aclaraciones e incidentes de clientes y beneficiarios."
+        responsableDispersionProfinsa = person "Responsable interno de dispersión PROFINSA" {
+            description "Autoriza internamente la continuidad del pedido hacia dispersión una vez cumplidas las validaciones requeridas."
             tags "Profinsa"
         }
 
-        cumplimientoProfinsa = person "Responsable de cumplimiento PROFINSA" {
-            description "Rol pendiente de definición encargado de preparar evidencias y atender el proceso de autorización y verificación ante el SAT."
+        contabilidad = person "Contabilidad y Facturación PROFINSA" {
+            description "Supervisa la emisión, cancelación, sustitución y consulta de CFDI, notas de crédito y complementos de pago."
             tags "Profinsa"
         }
 
+        atencionProfinsa = person "Atención PROFINSA" {
+            description "Atiende solicitudes, bloqueos, aclaraciones e incidentes de clientes y beneficiarios."
+            tags "Profinsa"
+        }
 
-        /************************************************************
-         * SISTEMA PRINCIPAL
-         ************************************************************/
+        cumplimientoProfinsa = person "Cumplimiento y Seguridad PROFINSA" {
+            description "Consulta evidencias, bitácoras, reportes y configuraciones para la autorización y verificación tecnológica ante el SAT."
+            tags "Profinsa"
+        }
 
         plataformaProfinsa = softwareSystem "Plataforma de Monedero Electrónico PROFINSA" {
-            description "Plataforma que administra clientes, beneficiarios, pedidos, tarjetas, dispersiones, saldos de control, movimientos, conciliación, soporte y evidencias de cumplimiento."
-
-            /********************************************************
-             * CANALES
-             ********************************************************/
+            description "Sistema principal para clientes, beneficiarios, tarjetas, pedidos, pagos, facturación, dispersiones, ledger, conciliación, soporte, reportes y evidencias. No depende de SAP."
 
             portalEmpresarial = container "Portal empresarial" {
-                description "Permite a las empresas clientes administrar usuarios, colaboradores, tarjetas, pedidos de dispersión y reportes."
-                technology "Aplicación web"
+                description "Permite administrar usuarios y perfiles, registrar beneficiarios, consultar tarjetas, generar o autorizar pedidos según rol, consultar pagos, CFDI y reportes."
+                technology "Aplicación web sobre Amazon CloudFront"
                 tags "Web"
             }
 
             appBeneficiario = container "Aplicación del beneficiario" {
-                description "Permite activar la tarjeta, consultar saldo y movimientos, bloquear el monedero y recibir notificaciones."
+                description "Permite activación inicial, cambio y recuperación de NIP o contraseña, consulta de saldo y movimientos, desactivación temporal, reactivación de tarjeta y notificaciones."
                 technology "Aplicación móvil"
                 tags "Mobile"
             }
 
             portalOperacion = container "Portal operativo PROFINSA" {
-                description "Permite administrar clientes, contratos, pedidos, tarjetas, dispersiones, excepciones y conciliaciones."
-                technology "Aplicación web"
+                description "Permite operar clientes, validar pagos, gestionar facturación, autorizar internamente dispersiones, administrar tarjetas, conciliaciones, soporte y auditoría."
+                technology "Aplicación web sobre Amazon CloudFront"
                 tags "Web"
             }
 
-
-            /********************************************************
-             * ENTRADA Y SEGURIDAD
-             ********************************************************/
-
-            apiGateway = container "API Gateway" {
-                description "Punto de entrada para las aplicaciones; autentica, autoriza, limita y registra las solicitudes."
-                technology "API Management / HTTPS"
-                tags "API"
+            capaEntrada = container "Capa de entrada y protección" {
+                description "Publica el portal y las APIs, termina TLS, filtra tráfico malicioso, aplica límites y distribuye solicitudes."
+                technology "Amazon Route 53 + CloudFront + AWS WAF + ALB/API Gateway"
+                tags "API,Security"
             }
 
-            identidadAccesos = container "Gestión de identidad y acceso" {
-                description "Administra usuarios, roles, autenticación multifactor, sesiones y políticas de acceso."
-                technology "IAM / OAuth 2.0 / OpenID Connect"
+            identidadAccesos = container "Identidad y control de acceso" {
+                description "Gestiona usuarios, MFA, sesiones, recuperación de acceso, roles y segregación de funciones."
+                technology "Amazon Cognito + IAM Identity Center"
                 tags "Security"
             }
 
+            coreNegocio = container "API y core de negocio" {
+                description "Orquesta clientes, usuarios, beneficiarios, pedidos, autorizaciones, reglas comerciales y estados del proceso."
+                technology "Django/Laravel API en Amazon ECS Fargate"
+                tags "Core"
 
-            /********************************************************
-             * CORE DE NEGOCIO PROFINSA
-             ********************************************************/
+                clientesComponent = component "Gestión de clientes" {
+                    description "Administra expediente, datos fiscales, condiciones comerciales y estatus del cliente."
+                    technology "Módulo backend"
+                }
+                usuariosComponent = component "Usuarios y perfiles" {
+                    description "Aplica RBAC, MFA y segregación de funciones entre Manager, generador, autorizador y consulta; impide que el generador autorice su propio pedido."
+                    technology "Módulo backend"
+                }
+                beneficiariosComponent = component "Beneficiarios y layouts" {
+                    description "Valida altas individuales y masivas, duplicados, campos obligatorios y relación con tarjetas."
+                    technology "Módulo backend"
+                }
+                pedidosComponent = component "Pedidos y autorizaciones" {
+                    description "Gestiona pedidos, folios, importes, fechas programadas, autorización o rechazo por el cliente y generación automática de proforma no timbrada."
+                    technology "Módulo backend"
+                }
+                workflowComponent = component "Motor de estados y reglas" {
+                    description "Controla los gates del proceso: pedido autorizado por el cliente, pago validado, facturación cuando aplique y autorización interna PROFINSA antes de dispersar."
+                    technology "Servicio de dominio"
+                }
+                auditoriaComponent = component "Auditoría funcional" {
+                    description "Genera eventos de trazabilidad con usuario, fecha, origen, acción y resultado."
+                    technology "Servicio transversal"
+                }
+            }
 
-            coreNegocio = container "Core de negocio PROFINSA" {
-                description "Gestiona clientes, beneficiarios, contratos, pedidos, autorizaciones internas, tarjetas y reglas comerciales."
-                technology "Servicios backend"
+            pagos = container "Servicio de pagos" {
+                description "Gestiona estado de cuenta, comprobantes, referencias y validación del pago en firme por Tesorería."
+                technology "Servicio backend en Amazon ECS Fargate"
                 tags "Core"
             }
 
-            servicioDispersiones = container "Servicio de dispersiones" {
-                description "Valida, autoriza y ejecuta las instrucciones de dispersión hacia el procesador externo."
-                technology "Servicio backend"
-                tags "Core"
+            facturacion = container "Servicio de facturación" {
+                description "Construye CFDI, solicita timbrado al PAC, administra reintentos, cancelaciones, sustituciones, complementos y disponibilidad de PDF/XML."
+                technology "Servicio backend y worker en Amazon ECS Fargate"
+                tags "Core,Tax"
+
+                fiscalDataComponent = component "Validador de datos fiscales" {
+                    description "Valida RFC, razón social, código postal, régimen, uso CFDI, conceptos, impuestos, forma y método de pago."
+                    technology "Componente de dominio"
+                }
+                cfdiBuilderComponent = component "Constructor de CFDI" {
+                    description "Genera la solicitud fiscal y mantiene folio interno e idempotencia."
+                    technology "Componente de dominio"
+                }
+                pacClientComponent = component "Cliente de integración PAC" {
+                    description "Envía solicitudes, recibe UUID/XML, consulta estatus y procesa cancelaciones y sustituciones."
+                    technology "Adaptador HTTPS/API"
+                }
+                invoiceWorkflowComponent = component "Workflow fiscal" {
+                    description "Controla estados pendiente, enviado, timbrado, error, cancelado, sustituido y complemento emitido."
+                    technology "Servicio de aplicación"
+                }
+                pdfComponent = component "Generador de representación PDF" {
+                    description "Genera o recibe la representación impresa asociada al XML timbrado."
+                    technology "Worker asíncrono"
+                }
+                fiscalAuditComponent = component "Auditoría fiscal" {
+                    description "Registra cada operación de emisión, firmado, timbrado, descarga, cancelación y consulta."
+                    technology "Servicio transversal"
+                }
             }
 
-            gestionTarjetas = container "Gestión de tarjetas" {
-                description "Gestiona solicitudes, asociaciones, activaciones, bloqueos, reposiciones, cancelaciones y estados de tarjetas."
-                technology "Servicio backend"
+            dispersiones = container "Servicio de dispersiones" {
+                description "Verifica pedido autorizado por el cliente, pago validado y autorización interna PROFINSA; envía la instrucción al procesador y registra resultados, errores, reintentos e idempotencia."
+                technology "Servicio backend y worker en Amazon ECS Fargate"
                 tags "Core"
+
+                dispersionValidationComponent = component "Validador previo a dispersión" {
+                    description "Valida que el pedido esté autorizado, que el pago se encuentre validado y que exista autorización interna PROFINSA antes de continuar."
+                    technology "Componente de dominio"
+                }
+                internalApprovalComponent = component "Autorización interna PROFINSA" {
+                    description "Registra la decisión del responsable interno para autorizar la continuidad del pedido hacia dispersión, con usuario, fecha, hora y trazabilidad."
+                    technology "Servicio de aplicación"
+                }
+                dispersionExecutionComponent = component "Ejecutor de dispersión" {
+                    description "Construye y envía instrucciones de abono por beneficiario/tarjeta al procesador, con idempotencia y control de reintentos."
+                    technology "Worker asíncrono"
+                }
+                dispersionStatusComponent = component "Control de resultados de dispersión" {
+                    description "Gestiona estados pendiente, en proceso, aplicada, parcialmente aplicada y rechazada/con error; registra resultados por beneficiario."
+                    technology "Servicio de dominio"
+                }
+            }
+
+            tarjetas = container "Servicio de tarjetas" {
+                description "Gestiona inventario de tarjetas por cliente, asignación automática a beneficiarios, activación, desactivación temporal, reactivación, bloqueo definitivo, reposición y trazabilidad sin exponer el PAN completo a usuarios operativos."
+                technology "Servicio backend en Amazon ECS Fargate"
+                tags "Core"
+
+                cardInventoryComponent = component "Inventario de tarjetas por cliente" {
+                    description "Mantiene tarjetas disponibles asignadas a cada cliente, tipo personalizada/stock, disponibilidad y estado operativo."
+                    technology "Componente de dominio"
+                }
+                cardAssignmentComponent = component "Asignación automática de tarjetas" {
+                    description "Asigna automáticamente una tarjeta disponible al beneficiario, evita doble asignación y garantiza una sola tarjeta activa por beneficiario."
+                    technology "Servicio de aplicación"
+                }
+                cardLifecycleComponent = component "Ciclo de vida y reposición" {
+                    description "Gestiona activación, desactivación temporal, reactivación, bloqueo definitivo y reposición; una nueva tarjeta se vincula al mismo beneficiario."
+                    technology "Servicio de dominio"
+                }
+                cardDataProtectionComponent = component "Protección de datos de tarjeta" {
+                    description "Expone a usuarios operativos solo identificadores mínimos o últimos cuatro dígitos; NIP, EMV y datos sensibles permanecen bajo control del procesador."
+                    technology "Control transversal de seguridad"
+                }
             }
 
             conciliacion = container "Motor de conciliación" {
-                description "Compara pedidos, dispersiones, transacciones, saldos y registros contables para identificar diferencias."
-                technology "Servicio backend / Procesamiento por lotes"
+                description "Compara pedidos, pagos, CFDI, dispersiones, transacciones y saldos para detectar diferencias."
+                technology "Worker programado en Amazon ECS Fargate"
                 tags "Core"
             }
 
-            aclaraciones = container "Servicio de aclaraciones" {
-                description "Gestiona compras no reconocidas, cargos duplicados, devoluciones, ajustes y seguimiento de casos."
-                technology "Servicio backend"
+            aclaraciones = container "Servicio de soporte y aclaraciones" {
+                description "Gestiona casos, compras no reconocidas, cargos duplicados, devoluciones, reversos y evidencias."
+                technology "Servicio backend en Amazon ECS Fargate"
                 tags "Core"
             }
 
-            reportes = container "Servicio de reportes" {
-                description "Genera reportes operativos, financieros, transaccionales, comerciales y evidencias para auditoría."
-                technology "Servicio de reportes"
+            reportes = container "Servicio de reportes y evidencias" {
+                description "Genera reportes operativos, fiscales, transaccionales y evidencias para auditoría y SAT."
+                technology "Worker/reporting en Amazon ECS Fargate"
                 tags "Reporting"
             }
 
-            notificaciones = container "Servicio de notificaciones" {
-                description "Envía correos, mensajes SMS, notificaciones push y avisos operativos."
-                technology "Correo / SMS / Push"
-                tags "Integration"
-            }
-
-
-            /********************************************************
-             * INTEGRACIONES
-             ********************************************************/
-
             adaptadorProcesador = container "Adaptador del procesador" {
-                description "Aísla al core de las APIs específicas del procesador y gestiona webhooks, reintentos, idempotencia y traducción de estados."
-                technology "API REST / Webhooks / Archivos"
+                description "Aísla las APIs del procesador y gestiona webhooks, firmas, reintentos, idempotencia y traducción de estados."
+                technology "Servicio de integración HTTPS/API/SFTP"
                 tags "Integration"
             }
 
-            integracionSap = container "Adaptador SAP" {
-                description "Integra clientes, pedidos, pagos, facturación, comisiones y registros contables con SAP."
-                technology "OData / API REST / Servicios SAP"
+            adaptadorTarjetas = container "Adaptador del fabricante de tarjetas" {
+                description "Envía órdenes de fabricación, personalización y entrega y recibe cambios de estado."
+                technology "Servicio de integración API/SFTP"
                 tags "Integration"
             }
 
-            integracionTarjetas = container "Adaptador del fabricante de tarjetas" {
-                description "Envía órdenes de fabricación, personalización, envío y recepción de tarjetas."
-                technology "API REST / SFTP / Archivos"
+            notificaciones = container "Servicio de notificaciones" {
+                description "Envía correos, SMS y notificaciones push asociados a eventos operativos."
+                technology "Amazon SES/SNS o proveedor externo"
                 tags "Integration"
             }
 
-            busEventos = container "Bus de eventos" {
-                description "Distribuye eventos de pedidos, dispersiones, tarjetas, transacciones, conciliaciones y notificaciones."
-                technology "Mensajería asíncrona"
+            colasEventos = container "Colas y eventos" {
+                description "Desacopla timbrado, dispersión, layouts, notificaciones, reportes, conciliación y reintentos."
+                technology "Amazon SQS + Amazon EventBridge"
                 tags "Messaging"
             }
 
-
-            /********************************************************
-             * DATOS
-             ********************************************************/
-
-            baseOperativa = container "Base de datos operativa" {
-                description "Almacena clientes, contratos, usuarios, beneficiarios, pedidos, tarjetas, configuraciones y aclaraciones."
-                technology "Base de datos relacional"
+            cache = container "Caché y control temporal" {
+                description "Mantiene sesiones técnicas, rate limits, bloqueos e información temporal no maestra."
+                technology "Amazon ElastiCache for Redis"
                 tags "Database"
             }
 
-            ledgerControl = container "Ledger de control PROFINSA" {
-                description "Mantiene una réplica auditable de dispersiones, compras, reversos, devoluciones y ajustes para control y conciliación."
-                technology "Base de datos transaccional"
+            baseOperativa = container "Base de datos operativa" {
+                description "Almacena clientes, usuarios, beneficiarios, pedidos, pagos, facturas, tarjetas, configuraciones y casos."
+                technology "Amazon RDS PostgreSQL Multi-AZ"
+                tags "Database"
+            }
+
+            ledgerControl = container "Ledger de control" {
+                description "Mantiene movimientos inmutables de abono, compra, reverso, devolución, ajuste y saldo resultante para control y conciliación."
+                technology "PostgreSQL con modelo de doble registro/control"
                 tags "Database,Ledger"
             }
 
             repositorioDocumental = container "Repositorio documental" {
-                description "Almacena contratos, identificaciones, layouts, comprobantes, facturas y evidencias."
-                technology "Almacenamiento de objetos"
+                description "Almacena expedientes, contratos, layouts, comprobantes, estados de cuenta, XML, PDF y evidencias."
+                technology "Amazon S3 con KMS, versionado y retención"
                 tags "Storage"
             }
 
-            auditoriaLogs = container "Auditoría y logs centralizados" {
-                description "Conserva registros protegidos de actividad, accesos, integraciones y operaciones críticas."
-                technology "Logs inmutables / SIEM"
+            auditoriaLogs = container "Auditoría, monitoreo y seguridad" {
+                description "Centraliza logs de aplicación, accesos y nube; genera alarmas y conserva evidencia protegida."
+                technology "CloudWatch + CloudTrail + AWS Config + GuardDuty + Security Hub + S3 Object Lock"
                 tags "Security,Database"
+            }
+
+            secretosLlaves = container "Secretos y llaves criptográficas" {
+                description "Protege credenciales, llaves de integración y material sensible del proceso fiscal."
+                technology "AWS Secrets Manager + AWS KMS"
+                tags "Security"
             }
         }
 
-
-        /************************************************************
-         * SISTEMAS EXTERNOS
-         ************************************************************/
-
         procesadorExterno = softwareSystem "Procesador externo de tarjetas" {
-            description "Administra la emisión técnica, saldo operativo, autorizaciones, NIP, EMV, reversos, devoluciones y compensación."
+            description "Administra la emisión técnica, autorizaciones, saldo operativo, NIP/EMV, reversos, devoluciones y compensación."
             tags "External,Processor"
         }
 
         redPagos = softwareSystem "Red de pagos" {
-            description "Red utilizada para enrutar y procesar las transacciones, por ejemplo Visa, Mastercard, Carnet u otra."
+            description "Enruta transacciones entre comercios y procesador."
             tags "External,Network"
         }
 
         comerciosPos = softwareSystem "Comercios y terminales POS" {
-            description "Establecimientos donde los beneficiarios realizan compras con el monedero."
+            description "Aceptan el monedero en compras autorizadas."
             tags "External,Commerce"
         }
 
-        sap = softwareSystem "SAP" {
-            description "Sistema empresarial utilizado para clientes, facturación, contabilidad, cuentas por cobrar y conciliación."
-            tags "External,SAP"
+        pac = softwareSystem "Proveedor Autorizado de Certificación (PAC)" {
+            description "Valida, timbra, certifica y procesa operaciones fiscales de CFDI."
+            tags "External,TaxProvider"
         }
 
-        fabricanteTarjetas = softwareSystem "Fabricante y personalizador de tarjetas" {
-            description "Fabrica, personaliza, empaqueta y entrega las tarjetas físicas."
+        banco = softwareSystem "Banco / información bancaria" {
+            description "Fuente para validar que el pago del cliente se encuentre reflejado. La validación puede apoyarse en integración, archivo o proceso manual controlado según el mecanismo definido."
+            tags "External,Bank"
+        }
+
+        fabricanteTarjetas = softwareSystem "Proveedor de tarjetas físicas" {
+            description "Fabrica, personaliza y entrega los plásticos conforme al proceso acordado. El mecanismo técnico de intercambio queda sujeto a definición con el proveedor."
             tags "External,Supplier"
         }
 
         servicioMensajeria = softwareSystem "Proveedor de mensajería" {
-            description "Entrega correos, mensajes SMS y notificaciones push."
+            description "Entrega correo, SMS o notificaciones push cuando no se utilicen servicios nativos de AWS."
             tags "External,Supplier"
         }
 
         sat = softwareSystem "SAT" {
-            description "Autoridad que autoriza y verifica el cumplimiento del emisor de monederos electrónicos."
+            description "Autoridad que regula, autoriza y verifica el cumplimiento del emisor."
             tags "External,Authority"
         }
 
+        empresaCliente -> plataformaProfinsa "Administra usuarios y perfiles y consulta información del cliente" "HTTPS"
+        generadorPedidoCliente -> plataformaProfinsa "Registra beneficiarios, solicita tarjetas y genera pedidos de dispersión" "HTTPS"
+        autorizadorPedidoCliente -> plataformaProfinsa "Revisa, autoriza o rechaza pedidos" "HTTPS"
+        beneficiario -> plataformaProfinsa "Activa y administra su tarjeta y consulta saldo y movimientos" "App móvil / HTTPS"
+        operadorProfinsa -> plataformaProfinsa "Administra la operación" "HTTPS / MFA"
+        tesoreria -> plataformaProfinsa "Valida pagos reflejados en banco" "HTTPS / MFA"
+        responsableDispersionProfinsa -> plataformaProfinsa "Autoriza internamente la continuidad hacia dispersión" "HTTPS / MFA"
+        contabilidad -> plataformaProfinsa "Gestiona y supervisa CFDI" "HTTPS / MFA"
+        atencionProfinsa -> plataformaProfinsa "Atiende solicitudes e incidentes" "HTTPS / MFA"
+        cumplimientoProfinsa -> plataformaProfinsa "Consulta evidencias y bitácoras" "HTTPS / MFA"
+        cumplimientoProfinsa -> sat "Presenta documentación y atiende verificaciones" "Portal / Expediente"
 
-        /************************************************************
-         * RELACIONES DEL NIVEL 1 - CONTEXTO
-         ************************************************************/
-
-        empresaCliente -> plataformaProfinsa "Registra colaboradores, solicita tarjetas, genera dispersiones y consulta reportes" "HTTPS"
-
-        beneficiario -> plataformaProfinsa "Activa y administra su monedero, consulta saldo y movimientos" "App móvil / HTTPS"
-
-        operadorProfinsa -> plataformaProfinsa "Administra la operación del monedero" "HTTPS / MFA"
-
-        tesoreriaContabilidad -> plataformaProfinsa "Valida el pago del cliente y consulta información financiera del pedido" "HTTPS / MFA"
-
-        atencionProfinsa -> plataformaProfinsa "Atiende solicitudes, bloqueos, aclaraciones e incidentes" "HTTPS / MFA"
-
-        cumplimientoProfinsa -> plataformaProfinsa "Consulta reportes y obtiene evidencias de cumplimiento" "HTTPS / MFA"
-
-        cumplimientoProfinsa -> sat "Presenta documentación y atiende procesos de autorización y verificación" "Portal / Expediente documental"
-        plataformaProfinsa -> procesadorExterno "Solicita emisión técnica, dispersiones, bloqueos y consulta movimientos" "API REST / Archivos"
-
-        procesadorExterno -> plataformaProfinsa "Notifica compras, rechazos, reversos, devoluciones y cambios de estado" "Webhooks / Archivos"
-
-
-
-        comerciosPos -> redPagos "Envía transacciones de compra, cancelación y devolución"
-
-        redPagos -> procesadorExterno "Enruta solicitudes de autorización y mensajes transaccionales"
-
+        plataformaProfinsa -> procesadorExterno "Solicita emisión, dispersión, bloqueo y consulta de transacciones" "HTTPS/API/SFTP"
+        procesadorExterno -> plataformaProfinsa "Notifica compras, rechazos, reversos y estados" "Webhooks/Archivos"
+        comerciosPos -> redPagos "Envía transacciones"
+        redPagos -> procesadorExterno "Enruta autorizaciones"
         procesadorExterno -> redPagos "Responde aprobaciones o rechazos"
+        plataformaProfinsa -> pac "Solicita timbrado, consulta, cancelación y sustitución de CFDI" "HTTPS/API"
+        pac -> plataformaProfinsa "Entrega UUID, XML, estatus y acuses" "HTTPS/API/Webhook"
+        plataformaProfinsa -> banco "Consulta, recibe o registra evidencia para validar pagos" "API/Archivo/Operación manual controlada"
+        plataformaProfinsa -> fabricanteTarjetas "Intercambia órdenes y estados de tarjetas según mecanismo acordado" "Mecanismo por definir"
+        plataformaProfinsa -> servicioMensajeria "Solicita notificaciones" "API"
 
-        plataformaProfinsa -> sap "Envía pedidos, comisiones, facturas y movimientos contables" "API / OData"
-
-        sap -> plataformaProfinsa "Proporciona clientes, pagos, facturas y registros contables" "API / OData"
-
-
-        plataformaProfinsa -> fabricanteTarjetas "Envía órdenes de fabricación y personalización" "API / SFTP"
-
-        plataformaProfinsa -> servicioMensajeria "Solicita el envío de notificaciones" "API"
-
-
-
-        /************************************************************
-         * RELACIONES DEL NIVEL 2 - CONTENEDORES
-         ************************************************************/
-
-        empresaCliente -> portalEmpresarial "Usa" "HTTPS"
-
+        empresaCliente -> portalEmpresarial "Administra usuarios y consulta información" "HTTPS"
+        generadorPedidoCliente -> portalEmpresarial "Registra beneficiarios y genera pedidos" "HTTPS"
+        autorizadorPedidoCliente -> portalEmpresarial "Autoriza o rechaza pedidos" "HTTPS"
         beneficiario -> appBeneficiario "Usa" "HTTPS"
+        operadorProfinsa -> portalOperacion "Usa" "HTTPS/MFA"
+        tesoreria -> portalOperacion "Valida pagos" "HTTPS/MFA"
+        responsableDispersionProfinsa -> portalOperacion "Autoriza continuidad hacia dispersión" "HTTPS/MFA"
+        contabilidad -> portalOperacion "Gestiona CFDI" "HTTPS/MFA"
+        atencionProfinsa -> portalOperacion "Gestiona casos" "HTTPS/MFA"
+        cumplimientoProfinsa -> portalOperacion "Consulta evidencias" "HTTPS/MFA"
 
-        operadorProfinsa -> portalOperacion "Usa" "HTTPS / MFA"
+        portalEmpresarial -> capaEntrada "Consume portal y APIs" "HTTPS"
+        appBeneficiario -> capaEntrada "Consume APIs" "HTTPS/JSON"
+        portalOperacion -> capaEntrada "Consume portal y APIs" "HTTPS"
+        capaEntrada -> identidadAccesos "Valida tokens, sesiones y permisos"
+        capaEntrada -> coreNegocio "Enruta solicitudes de negocio"
+        capaEntrada -> pagos "Enruta operaciones de pago"
+        capaEntrada -> facturacion "Enruta consultas y operaciones fiscales"
+        capaEntrada -> dispersiones "Enruta operaciones autorizadas"
+        capaEntrada -> tarjetas "Enruta operaciones de tarjetas"
+        capaEntrada -> aclaraciones "Enruta soporte y aclaraciones"
+        capaEntrada -> reportes "Enruta consultas de reportes"
+        capaEntrada -> auditoriaLogs "Registra solicitudes y eventos de seguridad"
 
-        tesoreriaContabilidad -> portalOperacion "Usa" "HTTPS / MFA"
+        coreNegocio -> baseOperativa "Lee y escribe información maestra"
+        coreNegocio -> repositorioDocumental "Gestiona expedientes y layouts"
+        coreNegocio -> colasEventos "Publica eventos de negocio"
+        coreNegocio -> auditoriaLogs "Registra trazabilidad"
+        coreNegocio -> cache "Usa datos temporales y bloqueos"
 
-        cumplimientoProfinsa -> portalOperacion "Consulta reportes y evidencias" "HTTPS / MFA"
+        pagos -> baseOperativa "Gestiona estados y referencias de pago"
+        pagos -> repositorioDocumental "Almacena estados de cuenta y comprobantes"
+        pagos -> banco "Obtiene confirmación o referencia" "API/Archivo/Control manual"
+        pagos -> colasEventos "Publica pago validado o rechazado"
+        pagos -> auditoriaLogs "Registra validaciones"
 
-        atencionProfinsa -> portalOperacion "Atiende solicitudes, aclaraciones, bloqueos e incidentes" "HTTPS / MFA"
+        facturacion -> baseOperativa "Consulta pedidos/pagos y registra datos fiscales"
+        facturacion -> repositorioDocumental "Almacena XML, PDF y acuses"
+        facturacion -> pac "Solicita operaciones fiscales" "HTTPS/API"
+        pac -> facturacion "Entrega resultados fiscales" "HTTPS/API/Webhook"
+        facturacion -> secretosLlaves "Obtiene secretos y llaves autorizadas"
+        facturacion -> colasEventos "Procesa timbrado, reintentos y complementos"
+        facturacion -> auditoriaLogs "Registra operaciones fiscales"
 
-        portalEmpresarial -> apiGateway "Consume APIs" "HTTPS / JSON"
+        dispersiones -> baseOperativa "Consulta pedidos autorizados, pagos validados y autorización interna"
+        dispersiones -> ledgerControl "Registra instrucciones y resultados"
+        dispersiones -> adaptadorProcesador "Envía dispersiones"
+        dispersiones -> colasEventos "Publica resultados y reintentos"
+        dispersiones -> auditoriaLogs "Registra operaciones críticas"
 
-        appBeneficiario -> apiGateway "Consume APIs" "HTTPS / JSON"
+        tarjetas -> baseOperativa "Gestiona relación y estado de tarjetas"
+        tarjetas -> adaptadorProcesador "Solicita emisión, activación, bloqueo y reposición"
+        tarjetas -> adaptadorTarjetas "Solicita fabricación y personalización"
+        tarjetas -> colasEventos "Publica cambios de estado"
+        tarjetas -> auditoriaLogs "Registra operaciones"
 
-        portalOperacion -> apiGateway "Consume APIs" "HTTPS / JSON"
-
-
-        portalEmpresarial -> identidadAccesos "Autentica usuarios"
-        appBeneficiario -> identidadAccesos "Autentica beneficiarios"
-        portalOperacion -> identidadAccesos "Autentica operadores con MFA"
-
-        apiGateway -> identidadAccesos "Valida identidades, sesiones y permisos"
-        apiGateway -> coreNegocio "Invoca servicios de negocio"
-        apiGateway -> gestionTarjetas "Invoca operaciones de tarjetas"
-        apiGateway -> servicioDispersiones "Invoca operaciones de dispersión"
-        apiGateway -> aclaraciones "Invoca operaciones de soporte y aclaraciones"
-        apiGateway -> reportes "Solicita reportes"
-
-        coreNegocio -> baseOperativa "Lee y escribe"
-        coreNegocio -> repositorioDocumental "Almacena y consulta documentos"
-        coreNegocio -> busEventos "Publica eventos de negocio"
-        coreNegocio -> integracionSap "Solicita procesos empresariales"
-        coreNegocio -> adaptadorProcesador "Solicita operaciones del procesador"
-        coreNegocio -> auditoriaLogs "Registra actividades"
-
-        servicioDispersiones -> baseOperativa "Consulta pedidos autorizados"
-        servicioDispersiones -> ledgerControl "Registra instrucciones y movimientos de control"
-        servicioDispersiones -> adaptadorProcesador "Envía instrucciones de dispersión"
-        servicioDispersiones -> busEventos "Publica resultados de dispersión"
-        servicioDispersiones -> auditoriaLogs "Registra actividades críticas"
-
-        gestionTarjetas -> baseOperativa "Consulta y actualiza estados"
-        gestionTarjetas -> adaptadorProcesador "Solicita emisión, activación, bloqueo y reposición"
-        gestionTarjetas -> integracionTarjetas "Solicita fabricación y personalización"
-        gestionTarjetas -> busEventos "Publica cambios de estado"
-        gestionTarjetas -> auditoriaLogs "Registra operaciones de tarjeta"
-
-        adaptadorProcesador -> procesadorExterno "Consume APIs de emisión y procesamiento" "HTTPS / API REST"
-
-        procesadorExterno -> adaptadorProcesador "Envía eventos transaccionales" "Webhooks / Archivos"
-
+        adaptadorProcesador -> procesadorExterno "Consume servicios del procesador" "HTTPS/API/SFTP"
+        procesadorExterno -> adaptadorProcesador "Envía eventos transaccionales" "Webhook/Archivo"
         adaptadorProcesador -> ledgerControl "Registra compras, reversos y devoluciones"
-        adaptadorProcesador -> busEventos "Publica eventos transaccionales"
+        adaptadorProcesador -> colasEventos "Publica eventos transaccionales"
         adaptadorProcesador -> auditoriaLogs "Registra solicitudes y respuestas"
+        adaptadorProcesador -> secretosLlaves "Obtiene credenciales de integración"
 
+        conciliacion -> baseOperativa "Consulta pedidos, pagos y CFDI"
         conciliacion -> ledgerControl "Consulta movimientos internos"
-        conciliacion -> baseOperativa "Consulta pedidos y dispersiones"
-        conciliacion -> adaptadorProcesador "Obtiene transacciones y saldos del procesador"
-        conciliacion -> integracionSap "Obtiene registros contables"
-        conciliacion -> auditoriaLogs "Registra resultados y diferencias"
-        conciliacion -> busEventos "Publica diferencias de conciliación"
+        conciliacion -> adaptadorProcesador "Obtiene transacciones y saldos"
+        conciliacion -> colasEventos "Publica diferencias"
+        conciliacion -> auditoriaLogs "Registra resultados"
 
-        aclaraciones -> baseOperativa "Registra y consulta casos"
-        aclaraciones -> ledgerControl "Consulta transacciones relacionadas"
-        aclaraciones -> adaptadorProcesador "Solicita reversos, devoluciones o investigaciones"
+        aclaraciones -> baseOperativa "Gestiona casos"
+        aclaraciones -> ledgerControl "Consulta movimientos"
+        aclaraciones -> adaptadorProcesador "Solicita investigación, reverso o devolución"
         aclaraciones -> repositorioDocumental "Almacena evidencias"
-        aclaraciones -> busEventos "Publica cambios del caso"
         aclaraciones -> auditoriaLogs "Registra acciones"
 
-        reportes -> baseOperativa "Consulta información operativa"
-        reportes -> ledgerControl "Consulta movimientos y saldos de control"
-        reportes -> auditoriaLogs "Consulta evidencia auditable"
+        reportes -> baseOperativa "Consulta información operativa y fiscal"
+        reportes -> ledgerControl "Consulta saldos y movimientos"
+        reportes -> repositorioDocumental "Genera y almacena evidencias"
+        reportes -> auditoriaLogs "Consulta evidencia técnica"
 
-        busEventos -> notificaciones "Entrega eventos notificables"
-        notificaciones -> servicioMensajeria "Envía correos, SMS y notificaciones push" "API"
-
-        integracionSap -> sap "Intercambia clientes, pagos, facturas y contabilidad" "OData / API"
-
-
-        integracionTarjetas -> fabricanteTarjetas "Envía órdenes de fabricación y recibe estados" "API / SFTP"
-
-        apiGateway -> auditoriaLogs "Registra accesos y solicitudes"
+        colasEventos -> notificaciones "Entrega eventos notificables"
+        notificaciones -> servicioMensajeria "Envía mensajes" "API"
+        adaptadorTarjetas -> fabricanteTarjetas "Intercambia órdenes y estados" "Mecanismo por definir"
         identidadAccesos -> auditoriaLogs "Registra autenticaciones y cambios de permisos"
-        portalOperacion -> auditoriaLogs "Registra acciones administrativas"
+        identidadAccesos -> secretosLlaves "Usa secretos y llaves administradas"
+
+        clientesComponent -> baseOperativa "Lee y escribe expediente"
+        clientesComponent -> repositorioDocumental "Gestiona documentación"
+        usuariosComponent -> identidadAccesos "Provisiona y revoca accesos"
+        usuariosComponent -> baseOperativa "Mantiene perfiles funcionales"
+        beneficiariosComponent -> baseOperativa "Gestiona beneficiarios"
+        beneficiariosComponent -> repositorioDocumental "Procesa layouts"
+        pedidosComponent -> baseOperativa "Gestiona pedidos y proformas"
+        pedidosComponent -> workflowComponent "Solicita validación de transición"
+        workflowComponent -> pagos "Habilita seguimiento de pago"
+        workflowComponent -> colasEventos "Publica cambios de estado"
+        auditoriaComponent -> auditoriaLogs "Envía registros funcionales"
+        workflowComponent -> dispersiones "Habilita dispersión solo al cumplir gates de negocio"
+
+        dispersionValidationComponent -> baseOperativa "Consulta pedido y pago"
+        dispersionValidationComponent -> internalApprovalComponent "Verifica autorización interna"
+        responsableDispersionProfinsa -> internalApprovalComponent "Autoriza o rechaza continuidad" "HTTPS/MFA"
+        internalApprovalComponent -> baseOperativa "Registra autorización y trazabilidad"
+        internalApprovalComponent -> dispersionExecutionComponent "Habilita ejecución cuando autoriza"
+        dispersionExecutionComponent -> adaptadorProcesador "Envía instrucciones de dispersión"
+        dispersionExecutionComponent -> ledgerControl "Registra instrucción de abono"
+        dispersionExecutionComponent -> dispersionStatusComponent "Entrega resultado de procesamiento"
+        dispersionStatusComponent -> baseOperativa "Actualiza estatus y detalle por beneficiario"
+        dispersionStatusComponent -> auditoriaLogs "Registra resultados y errores"
+
+        beneficiariosComponent -> cardAssignmentComponent "Solicita asignación automática de tarjeta"
+        cardAssignmentComponent -> cardInventoryComponent "Reserva tarjeta disponible del cliente"
+        cardAssignmentComponent -> baseOperativa "Relaciona beneficiario y tarjeta"
+        cardAssignmentComponent -> cardDataProtectionComponent "Aplica enmascaramiento para consulta"
+        cardLifecycleComponent -> adaptadorProcesador "Solicita activación, desactivación, bloqueo o reposición"
+        cardLifecycleComponent -> baseOperativa "Actualiza estado y relación de la tarjeta"
+        cardInventoryComponent -> baseOperativa "Consulta y actualiza inventario de tarjetas"
+        cardInventoryComponent -> adaptadorTarjetas "Gestiona altas/estados de plásticos disponibles"
+        cardDataProtectionComponent -> adaptadorProcesador "Delega NIP, EMV y datos sensibles"
+        cardDataProtectionComponent -> auditoriaLogs "Registra accesos y operaciones sensibles"
+
+        fiscalDataComponent -> baseOperativa "Consulta datos fiscales y pedido"
+        cfdiBuilderComponent -> fiscalDataComponent "Solicita datos validados"
+        cfdiBuilderComponent -> pacClientComponent "Envía solicitud idempotente"
+        pacClientComponent -> pac "Consume servicios fiscales" "HTTPS/API"
+        pac -> pacClientComponent "Devuelve XML, UUID, estatus y acuses" "HTTPS/API/Webhook"
+        pacClientComponent -> invoiceWorkflowComponent "Entrega resultado"
+        invoiceWorkflowComponent -> baseOperativa "Actualiza estado fiscal"
+        invoiceWorkflowComponent -> repositorioDocumental "Almacena XML y acuses"
+        invoiceWorkflowComponent -> pdfComponent "Solicita representación PDF"
+        pdfComponent -> repositorioDocumental "Almacena PDF"
+        pacClientComponent -> secretosLlaves "Obtiene credenciales"
+        fiscalAuditComponent -> auditoriaLogs "Registra evidencia fiscal"
     }
 
-
     views {
-
-        /************************************************************
-         * C4 NIVEL 1 - CONTEXTO
-         ************************************************************/
-
         systemContext plataformaProfinsa "C4-Nivel-1-Contexto" {
-            description "Contexto de la Plataforma de Monedero Electrónico PROFINSA y sus relaciones con usuarios y sistemas externos."
-
-            include empresaCliente
-            include beneficiario
-            include operadorProfinsa
-            include tesoreriaContabilidad
-            include atencionProfinsa
-            include cumplimientoProfinsa
-
-            include plataformaProfinsa
-            include procesadorExterno
-            include redPagos
-            include comerciosPos
-            include sap
-            include fabricanteTarjetas
-            include servicioMensajeria
-            include sat
-
+            description "Contexto actualizado según BBP: la plataforma es el sistema principal del emisor; integra procesador y PAC, y contempla validación bancaria por el mecanismo definido sin dependencia de SAP."
+            include *
             autolayout lr
         }
-
-
-        /************************************************************
-         * C4 NIVEL 2 - CONTENEDORES
-         ************************************************************/
 
         container plataformaProfinsa "C4-Nivel-2-Contenedores" {
-            description "Contenedores principales de la Plataforma PROFINSA e integraciones con sistemas externos."
-
-            include empresaCliente
-            include beneficiario
-            include operadorProfinsa
-            include tesoreriaContabilidad
-            include atencionProfinsa
-
-            include portalEmpresarial
-            include appBeneficiario
-            include portalOperacion
-            include apiGateway
-            include identidadAccesos
-            include coreNegocio
-            include servicioDispersiones
-            include gestionTarjetas
-            include conciliacion
-            include aclaraciones
-            include reportes
-            include notificaciones
-            include adaptadorProcesador
-            include integracionSap
-            include integracionTarjetas
-            include busEventos
-            include baseOperativa
-            include ledgerControl
-            include repositorioDocumental
-            include auditoriaLogs
-
-            include procesadorExterno
-            include redPagos
-            include comerciosPos
-            include sap
-            include fabricanteTarjetas
-            include servicioMensajeria
-
+            description "Contenedores del MVP en AWS para operación, pago, facturación, dispersión, seguridad y evidencia."
+            include *
             autolayout lr
         }
 
+        component coreNegocio "C4-Nivel-3-Core-Negocio" {
+            description "Componentes internos del core para clientes, usuarios, beneficiarios, pedidos, reglas y trazabilidad."
+            include *
+            autolayout lr
+        }
 
-        /************************************************************
-         * ESTILOS
-         ************************************************************/
+        component facturacion "C4-Nivel-3-Facturacion" {
+            description "Componentes internos del servicio de facturación integrado con PAC y sin dependencia de SAP."
+            include *
+            autolayout lr
+        }
+
+        component tarjetas "C4-Nivel-3-Tarjetas" {
+            description "Componentes para inventario por cliente, asignación automática, ciclo de vida, reposición y protección de datos de tarjeta según BBP."
+            include *
+            autolayout lr
+        }
+
+        component dispersiones "C4-Nivel-3-Dispersiones" {
+            description "Componentes para validar pedido, pago y autorización interna PROFINSA antes de ejecutar y controlar la dispersión."
+            include *
+            autolayout lr
+        }
 
         styles {
-
             element "Element" {
                 shape RoundedBox
                 background #F5F5F5
@@ -445,136 +520,114 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
                 stroke #6B7280
                 fontSize 22
             }
-
             element "Person" {
                 shape Person
                 background #0B4F6C
                 color #FFFFFF
-                stroke #083B50
             }
-
             element "Cliente" {
                 background #11698E
                 color #FFFFFF
             }
-
             element "Beneficiario" {
                 background #1A759F
                 color #FFFFFF
             }
-
             element "Profinsa" {
                 background #184E77
                 color #FFFFFF
             }
-
             element "Software System" {
                 background #2E6F95
                 color #FFFFFF
-                stroke #1F4E6B
             }
-
             element "Container" {
                 background #BFD7EA
                 color #102A43
-                stroke #486581
             }
-
+            element "Component" {
+                background #E6F2F8
+                color #102A43
+            }
             element "Web" {
                 shape WebBrowser
             }
-
             element "Mobile" {
                 shape MobileDevicePortrait
             }
-
             element "API" {
                 shape Hexagon
                 background #89C2D9
             }
-
             element "Core" {
                 background #61A5C2
                 color #FFFFFF
             }
-
+            element "Tax" {
+                background #2A9D8F
+                color #FFFFFF
+            }
             element "Integration" {
                 background #A9D6E5
                 color #102A43
             }
-
             element "Messaging" {
                 shape Pipe
                 background #A9D6E5
             }
-
             element "Database" {
                 shape Cylinder
                 background #D9EAF2
                 color #102A43
             }
-
             element "Ledger" {
                 background #99D98C
                 color #163A1B
             }
-
             element "Storage" {
                 shape Folder
                 background #D9EAF2
             }
-
             element "Security" {
                 background #F4A261
                 color #3D240B
             }
-
             element "Reporting" {
                 background #E9C46A
                 color #3D3106
             }
-
             element "External" {
                 background #6B7280
                 color #FFFFFF
-                stroke #4B5563
             }
-
             element "Processor" {
                 background #7B2CBF
                 color #FFFFFF
             }
-
-            element "Bank" {
-                background #386641
-                color #FFFFFF
-            }
-
             element "Network" {
                 background #9D4EDD
                 color #FFFFFF
             }
-
             element "Commerce" {
                 background #BC6C25
                 color #FFFFFF
             }
-
-            element "SAP" {
-                background #0070F2
+            element "TaxProvider" {
+                background #2A9D8F
                 color #FFFFFF
             }
-
+            element "Bank" {
+                background #386641
+                color #FFFFFF
+            }
             element "Supplier" {
                 background #606C38
                 color #FFFFFF
             }
-
             element "Authority" {
                 background #9B2226
                 color #FFFFFF
             }
-
             relationship "Relationship" {
                 color #5B6770
                 thickness 2
@@ -582,7 +635,6 @@ workspace "Plataforma de Vales de Despensa PROFINSA" "Arquitectura conceptual pr
                 fontSize 18
             }
         }
-
         theme default
     }
 
